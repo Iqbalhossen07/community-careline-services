@@ -9,6 +9,9 @@ if ($active_page == 'add-blog.php' || $active_page == 'edit-blog.php' || $active
 if ($active_page == 'add-career.php' || $active_page == 'edit-career.php' || $active_page == 'view-career.php') {
     $active_page = 'careers.php';
 }
+if ($active_page == 'add-testimonial.php' || $active_page == 'edit-testimonial.php' || $active_page == 'view-testimonial.php') {
+    $active_page = 'testimonials.php';
+}
 if ($active_page == 'add-service.php' || $active_page == 'edit-service.php' || $active_page == 'view-service.php' || $active_page == 'manage-categories.php') {
     $active_page = 'services.php';
 }
@@ -136,6 +139,14 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                 ">
                     <i class="fa-solid fa-hand-holding-heart w-5 h-5 mr-3"></i>
                     <span>Careers</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="testimonials.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
+                <?php echo ($active_page == 'testimonials.php') ? 'border-l-4 border-primary-end bg-sky-100 text-primary-end font-semibold' : 'text-gray-700 hover:bg-gray-100'; ?>
+                ">
+                    <i class="fa-solid fa-hand-holding-heart w-5 h-5 mr-3"></i>
+                    <span>Testimonials</span>
                 </a>
             </li>
 

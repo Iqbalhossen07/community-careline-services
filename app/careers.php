@@ -40,6 +40,21 @@ $locations_query = $mysqli->query("SELECT DISTINCT c_location FROM careers WHERE
         <?php include('sidebar.php') ?>
         <main class="flex-1 h-full overflow-y-auto">
             <?php include('top.php') ?>
+            <?php if (isset($_SESSION['message']) && $_SESSION['message'] != '') { ?>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: "<?php echo $_SESSION['message']; ?>",
+                    icon: "<?php echo $_SESSION['message_type']; ?>",
+                    confirmButtonText: "OK"
+                });
+            });
+            </script>
+            <?php
+                unset($_SESSION['message']);
+                unset($_SESSION['message_type']);
+            }
+            ?>
 
             <div class="p-4 md:p-8 mb-32 md:mb-0" data-aos="fade-up">
 

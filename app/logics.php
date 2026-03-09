@@ -2126,3 +2126,81 @@ if (isset($_GET['delete_career_id'])) {
     header('location:careers.php');
     exit();
 }
+
+
+
+
+
+// --- 1. Add Testimonial Logic ---
+if (isset($_POST['add_testimonial'])) {
+    $name        = $_POST['t_name'];
+    $designation = $_POST['t_designation'];
+    $description = $_POST['t_des'];
+
+    $query = "INSERT INTO testimonials (t_name, t_designation, t_des) VALUES (?, ?, ?)";
+    $stmt  = $mysqli->prepare($query);
+
+    if ($stmt) {
+        $stmt->bind_param("sss", $name, $designation, $description);
+
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Testimonial added successfully!";
+            $_SESSION['message_type'] = 'success';
+        } else {
+            $_SESSION['message'] = "Error: Could not add the testimonial.";
+            $_SESSION['message_type'] = 'error';
+        }
+        $stmt->close();
+    }
+    header('location:testimonials.php');
+    exit();
+}
+
+// --- 2. Update Testimonial Logic ---
+if (isset($_POST['update_testimonial'])) {
+    $id          = $_POST['id'];
+    $name        = $_POST['t_name'];
+    $designation = $_POST['t_designation'];
+    $description = $_POST['t_des'];
+
+    $query = "UPDATE testimonials SET t_name=?, t_designation=?, t_des=? WHERE id=?";
+    $stmt  = $mysqli->prepare($query);
+
+    if ($stmt) {
+        $stmt->bind_param("sssi", $name, $designation, $description, $id);
+
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Testimonial updated successfully!";
+            $_SESSION['message_type'] = 'success';
+        } else {
+            $_SESSION['message'] = "Error updating testimonial.";
+            $_SESSION['message_type'] = 'error';
+        }
+        $stmt->close();
+    }
+    header('location:testimonials.php');
+    exit();
+}
+
+// --- 3. Delete Testimonial Logic ---
+if (isset($_GET['delete_testimonial_id'])) {
+    $id = $_GET['delete_testimonial_id'];
+
+    $query = "DELETE FROM testimonials WHERE id = ?";
+    $stmt  = $mysqli->prepare($query);
+
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Testimonial deleted successfully!";
+            $_SESSION['message_type'] = 'success';
+        } else {
+            $_SESSION['message'] = "Error deleting testimonial.";
+            $_SESSION['message_type'] = 'error';
+        }
+        $stmt->close();
+    }
+    header('location:testimonials.php');
+    exit();
+}
