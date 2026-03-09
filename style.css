@@ -1,0 +1,27 @@
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: scroll-left 60s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+  /* Pause on hover so users can read */
+}
+
+.description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* কয় লাইন দেখাবে */
+  -webkit-box-orient: vertical;  
+  overflow: hidden; /* এটি না থাকলে বাকি লেখাগুলো নিচে দেখা যাবে */
+}
