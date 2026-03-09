@@ -58,7 +58,7 @@ if ($result) {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="servicesGrid">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="servicesGrid">
                     <?php if (!empty($services)) : ?>
                     <?php foreach ($services as $service) :
                             $title = htmlspecialchars($service['title']);
