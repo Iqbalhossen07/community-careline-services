@@ -2037,3 +2037,92 @@ if (isset($_GET['delete_category_id'])) {
     exit();
 }
 // ------------------ category crud end -------------------------
+
+
+
+
+
+
+
+
+// --- 1. Add Career Logic ---
+if (isset($_POST['add_career'])) {
+    $title           = $_POST['c_title'];
+    $job_type        = $_POST['c_job_type'];
+    $location        = $_POST['c_location'];
+    $salary          = $_POST['c_salary'];
+    $description     = $_POST['c_description'];
+    $responsibilties = $_POST['c_responsibilties'];
+    $requirements    = $_POST['c_requirements'];
+
+    $query = "INSERT INTO careers (c_title, c_job_type, c_location, c_salary, c_description, c_responsibilties, c_requirements) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt  = $mysqli->prepare($query);
+
+    if ($stmt) {
+        $stmt->bind_param("sssssss", $title, $job_type, $location, $salary, $description, $responsibilties, $requirements);
+
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "New job posted successfully!";
+            $_SESSION['message_type'] = 'success';
+        } else {
+            $_SESSION['message'] = "Error: Could not post the job.";
+            $_SESSION['message_type'] = 'error';
+        }
+        $stmt->close();
+    }
+    header('location:careers.php');
+    exit();
+}
+
+// --- 2. Update Career Logic ---
+if (isset($_POST['update_career'])) {
+    $id              = $_POST['id'];
+    $title           = $_POST['c_title'];
+    $job_type        = $_POST['c_job_type'];
+    $location        = $_POST['c_location'];
+    $salary          = $_POST['c_salary'];
+    $description     = $_POST['c_description'];
+    $responsibilties = $_POST['c_responsibilties'];
+    $requirements    = $_POST['c_requirements'];
+
+    $query = "UPDATE careers SET c_title=?, c_job_type=?, c_location=?, c_salary=?, c_description=?, c_responsibilties=?, c_requirements=? WHERE id=?";
+    $stmt  = $mysqli->prepare($query);
+
+    if ($stmt) {
+        $stmt->bind_param("sssssssi", $title, $job_type, $location, $salary, $description, $responsibilties, $requirements, $id);
+
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Career information updated successfully!";
+            $_SESSION['message_type'] = 'success';
+        } else {
+            $_SESSION['message'] = "Error updating career.";
+            $_SESSION['message_type'] = 'error';
+        }
+        $stmt->close();
+    }
+    header('location:careers.php');
+    exit();
+}
+
+// --- 3. Delete Career Logic ---
+if (isset($_GET['delete_career_id'])) {
+    $id = $_GET['delete_career_id'];
+
+    $query = "DELETE FROM careers WHERE id = ?";
+    $stmt  = $mysqli->prepare($query);
+
+    if ($stmt) {
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Job post deleted successfully!";
+            $_SESSION['message_type'] = 'success';
+        } else {
+            $_SESSION['message'] = "Error deleting job post.";
+            $_SESSION['message_type'] = 'error';
+        }
+        $stmt->close();
+    }
+    header('location:careers.php');
+    exit();
+}

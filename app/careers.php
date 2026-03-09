@@ -50,7 +50,7 @@ $locations_query = $mysqli->query("SELECT DISTINCT c_location FROM careers WHERE
                     </div>
                     <a href="add-career.php"
                         class="bg-primary-start text-white px-6 py-2.5 rounded-lg shadow-md hover:bg-primary-end transition-all font-bold uppercase tracking-wider text-xs flex items-center justify-center">
-                        <i class="fa-solid fa-plus mr-2"></i> Add New Career
+                        <i class="fa-solid fa-plus mr-2"></i> Add New Job
                     </a>
                 </div>
 
