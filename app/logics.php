@@ -1713,236 +1713,128 @@ if (isset($_POST['bulk_delete_action'])) {
 
 // ---------------------- services crud start -----------------------
 
-// --- Add Service Logic  ---
+// --- Add Service Logic ---
 if (isset($_POST['add_service'])) {
     $title       = $_POST['title'];
-    $category       = $_POST['category'];
     $description = $_POST['description'];
+    $image_name  = '';
 
-    // --- Multiple Image Upload Logic ---
-    $image_filenames = []; // সব ছবির নাম এখানে জমা হবে
+    // ১. সিঙ্গেল ইমেজ আপলোড লজিক
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $file_name = $_FILES['image']['name'];
+        $tmpName   = $_FILES['image']['tmp_name'];
 
-    // চেক করা হচ্ছে কোনো ফাইল সিলেক্ট করা হয়েছে কিনা
-    if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+        $image_ext         = pathinfo($file_name, PATHINFO_EXTENSION);
+        $unique_image_name = time() . '_service_' . rand(1000, 9999) . '.' . $image_ext;
+        $folder            = 'uploads/services_images/' . $unique_image_name;
 
-        $total_files = count($_FILES['images']['name']); // মোট কতগুলো ফাইল
-
-        for ($i = 0; $i < $total_files; $i++) {
-            $image_name = $_FILES['images']['name'][$i];
-            $tmpName    = $_FILES['images']['tmp_name'][$i];
-
-            // ১. একটি নতুন ইউনিক নাম তৈরি করা
-            $image_ext = pathinfo($image_name, PATHINFO_EXTENSION);
-            // লুপের মধ্যে ইউনিক নাম নিশ্চিত করতে $i যুক্ত করা হলো
-            $unique_image_name = time() . '_' . $i . '_service_' . rand(1000, 9999) . '.' . $image_ext;
-
-            // ২. 'uploads/services_images/' ফোল্ডার
-            $folder = 'uploads/services_images/' . $unique_image_name;
-
-            // ৩. ফাইল আপলোড করা
-            if (move_uploaded_file($tmpName, $folder)) {
-                // সফল হলে অ্যারেতে নাম যোগ করা
-                $image_filenames[] = $unique_image_name;
-            }
+        if (move_uploaded_file($tmpName, $folder)) {
+            $image_name = $unique_image_name;
         }
     }
 
-    // ৪. অ্যারে থেকে স্ট্রিং এ কনভার্ট করা (Comma Separated)
-    // উদাহরণ: "123_service.jpg,124_service.jpg"
-    $image_string = implode(',', $image_filenames);
-
-
-    // --- Database Insert using Prepared Statements ---
-    // আমরা শুধু title, description এবং image ফিল্ডে ডাটা পাঠাবো
-    $query = "INSERT INTO services (title, category, description, image) VALUES (?, ?, ?, ?)";
-
-    $stmt = $mysqli->prepare($query);
+    // ২. ডাটাবেস ইনসার্ট (Category বাদ দেওয়া হয়েছে)
+    $query = "INSERT INTO services (title, description, image) VALUES (?, ?, ?)";
+    $stmt  = $mysqli->prepare($query);
 
     if ($stmt) {
-        // প্যারামিটার বাইন্ড করা (s, s, s, s) -> title, description, image
-        $stmt->bind_param("ssss", $title, $category, $description, $image_string);
+        $stmt->bind_param("sss", $title, $description, $image_name);
 
-        // স্টেটমেন্ট এক্সিকিউট করা
         if ($stmt->execute()) {
-            $_SESSION['message'] = "Service added successfully!";
+            $_SESSION['message']      = "Service added successfully!";
             $_SESSION['message_type'] = 'success';
         } else {
-            $_SESSION['message'] = "Error: Could not add the service.";
+            $_SESSION['message']      = "Error: Could not add the service.";
             $_SESSION['message_type'] = 'error';
         }
         $stmt->close();
-    } else {
-        $_SESSION['message'] = "Error: Database query could not be prepared.";
-        $_SESSION['message_type'] = 'error';
     }
-
-    // কাজ শেষে services.php পেজে রিডাইরেক্ট করা
     header('location:services.php');
     exit();
 }
 
-// --- Update Service Logic  ---
+// --- Update Service Logic ---
 if (isset($_POST['update_service'])) {
-    $id = $_POST['id'];
-    $old_images_from_form = $_POST['old_image']; // ইউজার যেসব পুরানো ছবি রাখতে চেয়েছে
-
-    // English Data Only
-    $title = $_POST['title'];
-    $category = $_POST['category'];
+    $id          = $_POST['id'];
+    $title       = $_POST['title'];
     $description = $_POST['description'];
+    $old_image   = $_POST['old_image'];
+    $final_image = $old_image;
 
-    // --- ধাপ ১: ফোল্ডার ক্লিনআপ লজিক (নতুন কোড) ---
-    // আপডেট করার আগে আমরা চেক করব কোন ছবিগুলো ইউজার ডিলিট করে দিয়েছে
+    // নতুন ইমেজ আপলোড করা হয়েছে কি না চেক করা
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $file_name = $_FILES['image']['name'];
+        $tmpName   = $_FILES['image']['tmp_name'];
 
-    // ১.১ ডাটাবেস থেকে বর্তমান ছবিগুলো আনুন
-    $stmt_fetch = $mysqli->prepare("SELECT image FROM services WHERE id = ?");
-    $stmt_fetch->bind_param("i", $id);
-    $stmt_fetch->execute();
-    $result_fetch = $stmt_fetch->get_result();
-    $row_fetch = $result_fetch->fetch_assoc();
-    $stmt_fetch->close();
+        $image_ext         = pathinfo($file_name, PATHINFO_EXTENSION);
+        $unique_image_name = time() . '_update_' . rand(1000, 9999) . '.' . $image_ext;
+        $folder            = 'uploads/services_images/' . $unique_image_name;
 
-    $db_existing_images = [];
-    if ($row_fetch && !empty($row_fetch['image'])) {
-        $db_existing_images = explode(',', $row_fetch['image']);
-    }
+        if (move_uploaded_file($tmpName, $folder)) {
+            $final_image = $unique_image_name;
 
-    // ১.২ ফর্ম থেকে আসা 'রাখার মতো' ছবিগুলো অ্যারেতে নিই
-    $kept_images = [];
-    if (!empty($old_images_from_form)) {
-        $kept_images = explode(',', $old_images_from_form);
-    }
-
-    // ১.৩ তুলনা করুন: ডাটাবেসে ছিল কিন্তু ফর্মে নেই -> মানে ডিলিট করতে হবে
-    // array_diff(A, B) মানে A তে আছে কিন্তু B তে নেই
-    $images_to_delete = array_diff($db_existing_images, $kept_images);
-
-    // ১.৪ ফোল্ডার থেকে ছবিগুলো ডিলিট করা
-    foreach ($images_to_delete as $img_del) {
-        $file_path = 'uploads/services_images/' . trim($img_del);
-        if (file_exists($file_path)) {
-            unlink($file_path); // ফোল্ডার থেকে ফাইল ডিলিট
-        }
-    }
-
-
-    // --- ধাপ ২: নতুন ছবি প্রসেসিং এবং ফাইনাল লিস্ট তৈরি ---
-
-    // শুরুতে ফাইনাল লিস্টে সেই ছবিগুলোই থাকবে যা ইউজার রাখতে চেয়েছে
-    $final_images_array = $kept_images;
-
-    // চেক করা হচ্ছে নতুন কোনো ছবি আপলোড করা হয়েছে কিনা
-    if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
-
-        $total_files = count($_FILES['images']['name']);
-        $new_image_filenames = [];
-
-        for ($i = 0; $i < $total_files; $i++) {
-            $image_name = $_FILES['images']['name'][$i];
-            $tmpName    = $_FILES['images']['tmp_name'][$i];
-
-            $image_ext = pathinfo($image_name, PATHINFO_EXTENSION);
-            // ইউনিক নাম তৈরি
-            $unique_image_name = time() . '_' . $i . '_service_' . rand(1000, 9999) . '.' . $image_ext;
-
-            $folder = 'uploads/services_images/' . $unique_image_name;
-
-            if (move_uploaded_file($tmpName, $folder)) {
-                $new_image_filenames[] = $unique_image_name;
-            }
-        }
-
-        // নতুন ছবিগুলো ফাইনাল অ্যারের সাথে যুক্ত করা
-        if (!empty($new_image_filenames)) {
-            $final_images_array = array_merge($final_images_array, $new_image_filenames);
-        }
-    }
-
-    // ফাইনাল স্ট্রিং তৈরি
-    $final_image_string = implode(',', $final_images_array);
-
-
-    // --- ধাপ ৩: ডাটাবেস আপডেট ---
-    $query = "UPDATE services SET title=?, category=?, description=?, image=? WHERE id=?";
-
-    $stmt = $mysqli->prepare($query);
-
-    if ($stmt) {
-        $stmt->bind_param("ssssi", $title, $category, $description, $final_image_string, $id);
-
-        if ($stmt->execute()) {
-            $_SESSION['message'] = "Service updated successfully!";
-            $_SESSION['message_type'] = 'success';
-        } else {
-            $_SESSION['message'] = "Error updating service.";
-            $_SESSION['message_type'] = 'error';
-        }
-        $stmt->close();
-    } else {
-        $_SESSION['message'] = "Error: Database query failed.";
-        $_SESSION['message_type'] = 'error';
-    }
-
-    header('location:services.php');
-    exit();
-}
-
-
-// --- Delete Service Logic ---
-if (isset($_GET['delete_service_id'])) {
-    $id = $_GET['delete_service_id'];
-
-    // --- ধাপ ১: ডাটাবেস থেকে ইমেজের নামগুলো খুঁজে বের করা ---
-    $stmt_select = $mysqli->prepare("SELECT image FROM services WHERE id = ?");
-
-    if ($stmt_select) {
-        $stmt_select->bind_param("i", $id);
-        $stmt_select->execute();
-        $result = $stmt_select->get_result();
-        $row = $result->fetch_assoc();
-        $stmt_select->close();
-
-        // যদি ডাটা পাওয়া যায়
-        if ($row) {
-            $images_str = $row['image']; // যেমন: "img1.jpg,img2.jpg"
-
-            // --- ধাপ ২: ফোল্ডার থেকে সব ছবি ডিলিট করা ---
-            if (!empty($images_str)) {
-                // স্ট্রিং ভেঙে অ্যারে তৈরি
-                $images_array = explode(',', $images_str);
-
-                foreach ($images_array as $image_name) {
-                    $file_path = 'uploads/services_images/' . trim($image_name);
-
-                    // ফাইলটি ফোল্ডারে আছে কিনা চেক করে ডিলিট করা
-                    if (file_exists($file_path)) {
-                        unlink($file_path);
-                    }
+            // পুরানো ইমেজ ফোল্ডার থেকে ডিলিট করা
+            if (!empty($old_image)) {
+                $old_file_path = 'uploads/services_images/' . $old_image;
+                if (file_exists($old_file_path)) {
+                    unlink($old_file_path);
                 }
             }
         }
     }
 
-    // --- ধাপ ৩: ডাটাবেস থেকে রেকর্ড ডিলিট করা ---
-    $stmt_delete = $mysqli->prepare("DELETE FROM services WHERE id = ?");
+    // ডাটাবেস আপডেট (Category বাদ দেওয়া হয়েছে)
+    $query = "UPDATE services SET title=?, description=?, image=? WHERE id=?";
+    $stmt  = $mysqli->prepare($query);
 
-    if ($stmt_delete) {
-        $stmt_delete->bind_param("i", $id);
+    if ($stmt) {
+        $stmt->bind_param("sssi", $title, $description, $final_image, $id);
 
-        if ($stmt_delete->execute()) {
-            $_SESSION['message'] = "Service and all associated images deleted successfully!";
+        if ($stmt->execute()) {
+            $_SESSION['message']      = "Service updated successfully!";
             $_SESSION['message_type'] = 'success';
         } else {
-            $_SESSION['message'] = "Error deleting service.";
+            $_SESSION['message']      = "Error updating service.";
             $_SESSION['message_type'] = 'error';
         }
-        $stmt_delete->close();
-    } else {
-        $_SESSION['message'] = "Error: Database query failed.";
-        $_SESSION['message_type'] = 'error';
+        $stmt->close();
+    }
+    header('location:services.php');
+    exit();
+}
+
+// --- Delete Service Logic ---
+if (isset($_GET['delete_service_id'])) {
+    $id = $_GET['delete_service_id'];
+
+    // ১. ফোল্ডার থেকে ইমেজ ডিলিট করা
+    $stmt_fetch = $mysqli->prepare("SELECT image FROM services WHERE id = ?");
+    $stmt_fetch->bind_param("i", $id);
+    $stmt_fetch->execute();
+    $result = $stmt_fetch->get_result();
+    $row    = $result->fetch_assoc();
+    $stmt_fetch->close();
+
+    if ($row && !empty($row['image'])) {
+        $file_path = 'uploads/services_images/' . $row['image'];
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
     }
 
-    // কাজ শেষে রিডাইরেক্ট
+    // ২. ডাটাবেস থেকে ডিলিট
+    $stmt_delete = $mysqli->prepare("DELETE FROM services WHERE id = ?");
+    $stmt_delete->bind_param("i", $id);
+
+    if ($stmt_delete->execute()) {
+        $_SESSION['message']      = "Service deleted successfully!";
+        $_SESSION['message_type'] = 'success';
+    } else {
+        $_SESSION['message']      = "Error deleting service.";
+        $_SESSION['message_type'] = 'error';
+    }
+    $stmt_delete->close();
+
     header('location:services.php');
     exit();
 }

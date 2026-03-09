@@ -1,41 +1,18 @@
-/* --- ১. ফন্ট ডিক্লেয়ারেশন (তিনটি ফন্টই এখানে আছে) --- */
 
-/* Archivo Black - হেডিং এর জন্য */
-@font-face {
-  font-family: 'Archivo Black';
-  src: url('../fonts/ArchivoBlack-Regular.ttf') format('truetype');
-  font-display: swap;
-}
-
-/* Space Grotesk - বডি টেক্সটের জন্য */
-@font-face {
-  font-family: 'Space Grotesk';
-  src: url('../fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype-variations');
-  font-weight: 300 700;
-  font-display: swap;
-}
-
-/* Montserrat - মেনু এবং বাটনের জন্য */
-@font-face {
-  font-family: 'Montserrat';
-  src: url('../fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');
-  font-weight: 100 900;
-  font-display: swap;
-}
 
 /* --- ২. ডিফল্ট টাইপোগ্রাফি সেটআপ --- */
 body {
-  font-family: 'Space Grotesk', sans-serif; /* পুরো ব্যাকএন্ড ডিফল্ট বডি ফন্ট */
+  font-family: 'PT Serif', serif; /* পুরো ব্যাকএন্ড ডিফল্ট বডি ফন্ট */
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Archivo Black', sans-serif; /* সব হেডিং এর জন্য */
+  font-family: 'PT Serif', serif; /* সব হেডিং এর জন্য */
 }
 
 /* --- ৩. আপডেট করা CKEditor স্টাইল --- */
 .ck-editor__editable_inline {
   min-height: 300px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'PT Serif', serif;
 }
 
 .ck-powered-by {
@@ -54,7 +31,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* CKEditor এ ক্লিক করলে (focus) যে স্টাইল হবে */
 .ck.ck-editor__editable.ck-focused {
-  border-color: #44afe4 !important;
+  border-color: #538d00 !important;
   /* primary color */
   box-shadow: 0 0 0 0px rgba(40, 174, 236, 0.4) !important;
   /* ring-primary */
@@ -70,7 +47,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 5px;
 }
 .message-content::-webkit-scrollbar-thumb {
-  background-color: #44afe4; /* primary-start color */
+  background-color: #538d00; /* primary-start color */
   border-radius: 10px;
 }
 
@@ -91,14 +68,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .border-card:hover {
-  border-color: #44afe4;
+  border-color: #538d00;
   transform: scale(1.02);
 }
 
 
 /* এডমিন বাটন বা বিশেষ লিঙ্কের জন্য (যদি প্রয়োজন হয়) */
 .admin-nav-item {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'PT Serif', serif;
 }
 
 /* Chrome, Safari এবং Opera-এর জন্য স্ক্রলবার হাইড করা */
