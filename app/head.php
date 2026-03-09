@@ -16,15 +16,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
 <link rel="stylesheet" href="style.css?v=<?= time(); ?>">
-<link rel="shortcut icon" href="../img/logo.png" type="image/x-icon">
+<link rel="shortcut icon" href="../img/favicon.PNG" type="image/x-icon">
 
 <script>
 tailwind.config = {
     theme: {
         extend: {
             colors: {
-                'primary-start': '#44afe4', // আপনার দেওয়া কালার
-                'primary-end': '#6ACBEF',
+                'primary-start': '#538d00', // আপনার দেওয়া কালার
+                'primary-end': '#7ab81f',
                 'sidebar-bg': '#ffffff',
             },
             fontFamily: {

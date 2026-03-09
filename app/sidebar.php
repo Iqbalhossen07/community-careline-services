@@ -34,9 +34,11 @@ if ($active_page == 'terms_view.php') {
 $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 'about-content.php');
 ?>
 
-<aside id="sidebar" class="w-full lg:w-64 bg-sidebar-bg text-gray-800 flex-shrink-0 shadow-lg fixed lg:relative h-screen overflow-y-auto z-[100] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 no-scrollbar font-nav">
+<aside id="sidebar"
+    class="w-full lg:w-72 bg-sidebar-bg text-gray-800 flex-shrink-0 shadow-lg fixed lg:relative h-screen overflow-y-auto z-[100] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 no-scrollbar font-nav">
 
-  <button id="sidebar-close" class="absolute top-5 right-5 lg:hidden w-10 h-10 bg-rose-50 border-2 border-rose-100 text-rose-500 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-all duration-200">
+    <button id="sidebar-close"
+        class="absolute top-5 right-5 lg:hidden w-10 h-10 bg-rose-50 border-2 border-rose-100 text-rose-500 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-all duration-200">
         <i class="fa-solid fa-xmark text-xl"></i>
     </button>
 
@@ -59,14 +61,16 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
             </li>
 
             <li class="mb-2">
-                <a href="../index.php" target="_blank" class="font-nav flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+                <a href="../index.php" target="_blank"
+                    class="font-nav flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
                     <i class="fa-solid fa-globe w-5 h-5 mr-3 text-primary-end"></i>
                     <span>View Website</span>
                 </a>
             </li>
         </ul>
 
-        <div class="font-heading text-xs text-gray-400 uppercase font-bold mt-6 mb-2 tracking-widest">WEBSITE CONTENT</div>
+        <div class="font-heading text-xs text-gray-400 uppercase font-bold mt-6 mb-2 tracking-widest">WEBSITE CONTENT
+        </div>
         <ul>
             <li class="mb-2">
                 <a href="hero-sliders.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
@@ -87,13 +91,14 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                         <span>Manage About</span>
                     </div>
 
-                    <i id="aboutChevron" class="fa-solid fa-chevron-down text-xs transition-transform duration-300 <?php echo $is_about_active ? 'rotate-180' : ''; ?>"></i>
+                    <i id="aboutChevron"
+                        class="fa-solid fa-chevron-down text-xs transition-transform duration-300 <?php echo $is_about_active ? 'rotate-180' : ''; ?>"></i>
                 </button>
 
-                <ul id="aboutSubMenu" class="mt-1 space-y-1 overflow-hidden transition-all duration-300 <?php echo $is_about_active ? '' : 'hidden'; ?>">
+                <ul id="aboutSubMenu"
+                    class="mt-1 space-y-1 overflow-hidden transition-all duration-300 <?php echo $is_about_active ? '' : 'hidden'; ?>">
                     <li>
-                        <a href="home-about-content.php"
-                            class="font-nav flex items-center pl-11 pr-3 py-2 rounded-lg text-sm transition-colors
+                        <a href="home-about-content.php" class="font-nav flex items-center pl-11 pr-3 py-2 rounded-lg text-sm transition-colors
                <?php echo ($active_page == 'home-about-content.php')
                     ? 'text-primary-end font-bold bg-sky-100 border-l-4 border-primary-end'
                     : 'text-gray-600 hover:text-primary-end hover:bg-gray-50'; ?>">
@@ -103,8 +108,7 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                     </li>
 
                     <li>
-                        <a href="about-content.php"
-                            class="font-nav flex items-center pl-11 pr-3 py-2 rounded-lg text-sm transition-colors
+                        <a href="about-content.php" class="font-nav flex items-center pl-11 pr-3 py-2 rounded-lg text-sm transition-colors
                <?php echo ($active_page == 'about-content.php')
                     ? 'text-primary-end font-bold bg-sky-100 border-l-4 border-primary-end'
                     : 'text-gray-600 hover:text-primary-end hover:bg-gray-50'; ?>">
@@ -124,14 +128,7 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                 </a>
             </li>
 
-            <li class="mb-2">
-                <a href="portfolio.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
-        <?php echo ($active_page == 'portfolio.php') ? 'border-l-4 border-primary-end bg-sky-100 text-primary-end font-semibold' : 'text-gray-700 hover:bg-gray-100'; ?>
-    ">
-                    <i class="fa-solid fa-briefcase w-5 h-5 mr-3"></i>
-                    <span>Portfolio</span>
-                </a>
-            </li>
+
 
             <li class="mb-2">
                 <a href="blogs.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
@@ -142,14 +139,7 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                 </a>
             </li>
 
-            <li class="mb-2">
-                <a href="members.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
-                    <?php echo ($active_page == 'members.php') ? 'border-l-4 border-primary-end bg-sky-100 text-primary-end font-semibold' : 'text-gray-700 hover:bg-gray-100'; ?>
-                ">
-                    <i class="fa-solid fa-users w-5 h-5 mr-3"></i>
-                    <span>Members</span>
-                </a>
-            </li>
+
 
             <li class="mb-2">
                 <a href="contact-messages.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
@@ -159,13 +149,7 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                     <span>Messages</span>
                 </a>
             </li>
-            <li class="mb-2">
-                <a href="manage_metrics.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
-        <?php echo ($active_page == 'manage_metrics.php') ? 'border-l-4 border-primary-end bg-sky-100 text-primary-end font-semibold' : 'text-gray-700 hover:bg-gray-100'; ?>
-    ">
-                    <i class="fa-solid fa-chart-line w-5 h-5 mr-3"></i>
-                    <span>Metrics</span> </a>
-            </li>
+
             <li class="mb-2">
                 <a href="manage_privacy.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
         <?php echo ($active_page == 'manage_privacy.php') ? 'border-l-4 border-primary-end bg-sky-100 text-primary-end font-semibold' : 'text-gray-700 hover:bg-gray-100'; ?>
@@ -221,7 +205,8 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                 </a>
             </li>
             <li class="mb-2">
-                <a href="logout.php" class="font-nav flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+                <a href="logout.php"
+                    class="font-nav flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
                     <i class="fa-solid fa-right-from-bracket w-5 h-5 mr-3"></i>
                     <span>Logout</span>
                 </a>
@@ -232,16 +217,16 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
 </aside>
 
 <script>
-    function toggleAboutMenu() {
-        const menu = document.getElementById("aboutSubMenu");
-        const chevron = document.getElementById("aboutChevron");
+function toggleAboutMenu() {
+    const menu = document.getElementById("aboutSubMenu");
+    const chevron = document.getElementById("aboutChevron");
 
-        if (menu.classList.contains("hidden")) {
-            menu.classList.remove("hidden");
-            chevron.classList.add("rotate-180");
-        } else {
-            menu.classList.add("hidden");
-            chevron.classList.remove("rotate-180");
-        }
+    if (menu.classList.contains("hidden")) {
+        menu.classList.remove("hidden");
+        chevron.classList.add("rotate-180");
+    } else {
+        menu.classList.add("hidden");
+        chevron.classList.remove("rotate-180");
     }
+}
 </script>
