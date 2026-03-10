@@ -101,7 +101,7 @@
 
             <?php
             // ১. ডাটাবেস থেকে সার্ভিসগুলো নিয়ে আসা
-            $service_result = $mysqli->query("SELECT * FROM services ORDER BY id DESC");
+            $service_result = $mysqli->query("SELECT * FROM services ORDER BY id DESC LIMIT 3");
             $all_services = [];
             if ($service_result) {
                 $all_services = $service_result->fetch_all(MYSQLI_ASSOC);
@@ -429,10 +429,21 @@
                     </div>
                 </div>
 
+                <?php
+                // ১. ডাটাবেস থেকে ক্যারিয়ারের ডাটা ফেচ করা (সবশেষ পোস্টগুলো আগে দেখাবে)
+                $career_result = $mysqli->query("SELECT * FROM careers ORDER BY id DESC LIMIT 3"); // আপাতত ৩টি দেখাচ্ছি
+                $all_careers = [];
+                if ($career_result) {
+                    $all_careers = $career_result->fetch_all(MYSQLI_ASSOC);
+                }
+                ?>
+
                 <div class="lg:col-span-7 flex flex-col gap-5">
-
-                    <a href="career-details.php"
+                    <?php if (!empty($all_careers)): ?>
+                    <?php foreach ($all_careers as $job): ?>
+                    <a href="career-details.php?id=<?php echo $job['id']; ?>"
                         class="group block bg-lightBg rounded-md p-6 md:p-8 border border-gray-100 shadow-sm transition-all duration-300 transform hover:-translate-y-1 hover:bg-white hover:border-brand/30 hover:shadow-xl hover:shadow-black/10 relative overflow-hidden">
+
                         <div
                             class="absolute top-0 left-0 w-1 h-full bg-brand transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
                         </div>
@@ -441,18 +452,23 @@
                             <div class="flex-1">
                                 <div class="flex flex-wrap gap-2 mb-3">
                                     <span
-                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-xs font-bold group-hover:border-brand/30 transition-colors">Full-Time
-                                        / Part-Time</span>
+                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-[10px] md:text-xs font-bold group-hover:border-brand/30 transition-colors uppercase tracking-wider">
+                                        <?php echo htmlspecialchars($job['c_job_type']); ?>
+                                    </span>
                                     <span
-                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-xs font-bold group-hover:border-brand/30 transition-colors">Multiple
-                                        Locations</span>
+                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-[10px] md:text-xs font-bold group-hover:border-brand/30 transition-colors uppercase tracking-wider">
+                                        <?php echo htmlspecialchars($job['c_location']); ?>
+                                    </span>
                                 </div>
+
                                 <h3
                                     class="font-heading text-xl font-bold text-darkText group-hover:text-brand transition-colors uppercase tracking-tight mb-2">
-                                    Care Worker
+                                    <?php echo htmlspecialchars($job['c_title']); ?>
                                 </h3>
-                                <p class="text-gray-500 text-sm">Provide frontline compassionate care and daily support
-                                    to our clients in their own homes.</p>
+
+                                <p class="text-gray-500 text-sm line-clamp-2 leading-relaxed font-body">
+                                    <?php echo strip_tags($job['c_description']); ?>
+                                </p>
                             </div>
 
                             <div class="shrink-0 mt-4 sm:mt-0">
@@ -468,78 +484,12 @@
                             </div>
                         </div>
                     </a>
-
-                    <a href="career-details.php"
-                        class="group block bg-lightBg rounded-md p-6 md:p-8 border border-gray-100 shadow-sm transition-all duration-300 transform hover:-translate-y-1 hover:bg-white hover:border-brand/30 hover:shadow-xl hover:shadow-black/10 relative overflow-hidden">
-                        <div
-                            class="absolute top-0 left-0 w-1 h-full bg-brand transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                            <div class="flex-1">
-                                <div class="flex flex-wrap gap-2 mb-3">
-                                    <span
-                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-xs font-bold group-hover:border-brand/30 transition-colors">Full-Time</span>
-                                    <span
-                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-xs font-bold group-hover:border-brand/30 transition-colors">London
-                                        Region</span>
-                                </div>
-                                <h3
-                                    class="font-heading text-xl font-bold text-darkText group-hover:text-brand transition-colors uppercase tracking-tight mb-2">
-                                    Senior Care Supervisor
-                                </h3>
-                                <p class="text-gray-500 text-sm">Lead, mentor, and support our team of care workers
-                                    while ensuring the highest standards of compliance.</p>
-                            </div>
-                            <div class="shrink-0 mt-4 sm:mt-0">
-                                <div
-                                    class="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand group-hover:bg-brandDark shadow-md shadow-black/20 group-hover:shadow-lg group-hover:shadow-black/30 transition-all duration-300 transform group-hover:-translate-y-0.5">
-                                    Apply Now
-                                    <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="career-details.php"
-                        class="group block bg-lightBg rounded-md p-6 md:p-8 border border-gray-100 shadow-sm transition-all duration-300 transform hover:-translate-y-1 hover:bg-white hover:border-brand/30 hover:shadow-xl hover:shadow-black/10 relative overflow-hidden">
-                        <div
-                            class="absolute top-0 left-0 w-1 h-full bg-brand transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                            <div class="flex-1">
-                                <div class="flex flex-wrap gap-2 mb-3">
-                                    <span
-                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-xs font-bold group-hover:border-brand/30 transition-colors">Part-Time</span>
-                                    <span
-                                        class="bg-white border border-gray-200 text-darkText px-3 py-1 rounded-full text-xs font-bold group-hover:border-brand/30 transition-colors">Head
-                                        Office</span>
-                                </div>
-                                <h3
-                                    class="font-heading text-xl font-bold text-darkText group-hover:text-brand transition-colors uppercase tracking-tight mb-2">
-                                    Office Support
-                                </h3>
-                                <p class="text-gray-500 text-sm">Manage daily administrative tasks, scheduling, and
-                                    coordinate communication between clients and carers.</p>
-                            </div>
-                            <div class="shrink-0 mt-4 sm:mt-0">
-                                <div
-                                    class="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand group-hover:bg-brandDark shadow-md shadow-black/20 group-hover:shadow-lg group-hover:shadow-black/30 transition-all duration-300 transform group-hover:-translate-y-0.5">
-                                    Apply Now
-                                    <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <div class="bg-white rounded-md p-8 text-center border border-dashed border-gray-200">
+                        <p class="text-gray-400">No current job openings available.</p>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="mt-4">
                         <a href="careers.php"
@@ -547,7 +497,6 @@
                             All Jobs
                         </a>
                     </div>
-
                 </div>
 
             </div>
