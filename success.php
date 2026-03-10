@@ -10,8 +10,8 @@
             <div class="absolute inset-0 bg-gradient-to-r from-darkText via-darkText/80 to-transparent"></div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 w-full mt-10">
-            <h1 class="font-heading text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight">Submission Successful
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 w-full mt-20">
+            <h1 class="font-heading text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight">Submission Successful
             </h1>
             <p class="text-gray-300 text-lg">Thank you for reaching out to Community Careline Services.</p>
         </div>

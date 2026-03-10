@@ -119,7 +119,7 @@
                   ©2021 by Community Careline Services (Medway) Ltd. Proudly created with Wix.com</p>
               <div class="flex space-x-4 mt-4 md:mt-0">
                   <a href="privacy-policy.php" class="hover:text-white transition-colors">Privacy Policy</a>
-                  <a href="terms-of-conditions.php" class="hover:text-white transition-colors">Terms & Conditions</a>
+                  <a href="terms-and-conditions.php" class="hover:text-white transition-colors">Terms & Conditions</a>
               </div>
           </div>
       </div>
@@ -139,34 +139,93 @@
 
           <div class="flex flex-col gap-4 bg-white/20 p-2 md:p-0 rounded-full">
               <?php
-                if ($social_result && $social_result->num_rows > 0):
-                    while ($social = $social_result->fetch_assoc()):
-                        $platform = strtolower($social['platform_name']);
-                        $link = $social['link'];
+    if ($social_result && $social_result->num_rows > 0):
+        while ($social = $social_result->fetch_assoc()):
+            $platform = strtolower(trim($social['platform_name']));
+            $link = $social['link'];
 
-                        // প্ল্যাটফর্ম অনুযায়ী ব্যাকগ্রাউন্ড কালার এবং আইকন সেট করা
-                        $bg_color = "#666"; // ডিফল্ট কালার
-                        $icon_path = "";
+            // ডিফল্ট কালার এবং আইকন
+            $bg_color = "#666"; 
+            $icon_svg = '<i class="fa-solid fa-share-nodes text-xl"></i>';
 
-                        if ($platform == 'whatsapp') {
-                            $bg_color = "#25D366";
-                            $icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.451-4.437-9.884-9.888-9.884-5.452 0-9.885 4.434-9.888 9.884.001 2.228.651 4.39 1.849 6.22l-1.072 3.912 3.912-1.074z"/></svg>';
-                        } elseif ($platform == 'facebook') {
-                            $bg_color = "#1877F2";
-                            $icon_svg = '<i class="fa-brands fa-facebook-f text-xl"></i>';
-                        }
-                        // এভাবেই আপনি অন্যান্য প্ল্যাটফর্ম (Instagram, Twitter) যোগ করতে পারেন
-                ?>
-              <a href="<?php echo htmlspecialchars($link); ?>"
-                  aria-label="Chat on <?php echo $social['platform_name']; ?>" target="_blank" rel="noopener noreferrer"
+            // প্ল্যাটফর্ম অনুযায়ী কালার এবং আইকন লজিক
+            if ($platform == 'whatsapp') {
+                $bg_color = "#25D366";
+                $icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.451-4.437-9.884-9.888-9.884-5.452 0-9.885 4.434-9.888 9.884.001 2.228.651 4.39 1.849 6.22l-1.072 3.912 3.912-1.074z"/></svg>';
+            } elseif ($platform == 'facebook') {
+                $bg_color = "#1877F2";
+                $icon_svg = '<i class="fa-brands fa-facebook-f text-xl"></i>';
+            } elseif ($platform == 'youtube') {
+                $bg_color = "#FF0000";
+                $icon_svg = '<i class="fa-brands fa-youtube text-xl"></i>';
+            } elseif ($platform == 'instagram') {
+                $bg_color = "#E4405F";
+                $icon_svg = '<i class="fa-brands fa-instagram text-xl"></i>';
+            } elseif ($platform == 'telegram') {
+                $bg_color = "#26A5E4";
+                $icon_svg = '<i class="fa-brands fa-telegram text-xl"></i>';
+            } elseif ($platform == 'tiktok') {
+                $bg_color = "#000000";
+                $icon_svg = '<i class="fa-brands fa-tiktok text-xl"></i>';
+            } elseif ($platform == 'twitter' || $platform == 'x') {
+                $bg_color = "#1DA1F2"; // X এর জন্য কালো (#000000) দিতে পারেন
+                $icon_svg = '<i class="fa-brands fa-x-twitter text-xl"></i>';
+            } elseif ($platform == 'linkedin') {
+                $bg_color = "#0077B5";
+                $icon_svg = '<i class="fa-brands fa-linkedin-in text-xl"></i>';
+            }
+    ?>
+              <a href="<?php echo htmlspecialchars($link); ?>" aria-label="Chat on <?php echo ucwords($platform); ?>"
+                  target="_blank" rel="noopener noreferrer"
                   class="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white shadow-lg transform hover:scale-110 transition-transform duration-200 ease-in-out"
                   style="background-color: <?php echo $bg_color; ?>;">
                   <?php echo $icon_svg; ?>
               </a>
               <?php
-                    endwhile;
-                endif;
-                ?>
+        endwhile;
+    endif;
+    ?>
+          </div>
+      </div>
+  </div>
+
+
+  <div id="cookie-banner"
+      class="fixed bottom-6 left-6 right-6 lg:left-8 lg:right-auto lg:max-w-md bg-white/95 backdrop-blur-md p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100 z-[9999] hidden transform translate-y-10 opacity-0 transition-all duration-500">
+
+      <div class="flex items-start gap-5">
+          <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center flex-shrink-0 animate-pulse">
+              <i class="fa-solid fa-cookie-bite text-brand text-3xl"></i>
+          </div>
+
+          <div>
+              <h4 class="font-heading text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">
+                  Cookie Notice
+              </h4>
+
+              <h3 class="font-heading text-xl font-bold text-darkText mb-3">
+                  We value your privacy
+              </h3>
+
+              <p class="font-body text-sm text-gray-500 leading-relaxed mb-6">
+                  We use cookies to enhance your experience and analyze our traffic. By clicking "Accept All", you
+                  consent to our use of cookies.
+                  <a href="privacy-policy.php" class="text-brand font-bold hover:underline underline-offset-4">
+                      Read Policy
+                  </a>.
+              </p>
+
+              <div class="flex items-center gap-3">
+                  <button onclick="acceptCookies()"
+                      class="flex-1 bg-brand text-white px-6 py-3.5 text-[11px] font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-brand/20 hover:bg-darkText hover:shadow-none transition-all duration-300 transform active:scale-95">
+                      Accept All
+                  </button>
+
+                  <button onclick="closeCookieBanner()"
+                      class="px-6 py-3.5 text-[11px] font-bold uppercase tracking-widest text-gray-400 hover:text-darkText transition-colors">
+                      Decline
+                  </button>
+              </div>
           </div>
       </div>
   </div>

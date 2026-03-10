@@ -293,3 +293,76 @@ window.onclick = function(event) {
         closeTestimonialModal();
     }
 }
+
+
+
+// ১. কুকি সেট করার হেল্পার ফাংশন
+// ১. কুকি সেট করার হেল্পার ফাংশন
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+}
+
+// ২. কুকি গেট করার হেল্পার ফাংশন
+function getCookie(name) {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for(let i=0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+// ৩. কুকি একসেপ্ট করার ফাংশন
+function acceptCookies() {
+    // ১ বছরের জন্য কুকি সেট করা
+    setCookie("careline_consent", "accepted", 365);
+    
+    const banner = document.getElementById("cookie-banner");
+    if (banner) {
+        // স্মুথ এক্সিট এনিমেশন
+        banner.classList.add("translate-y-10", "opacity-0");
+        setTimeout(() => {
+            banner.classList.add("hidden");
+        }, 500);
+    }
+}
+
+// ৪. ডিক্লাইন বা ক্লোজ করার ফাংশন
+function closeCookieBanner() {
+    const banner = document.getElementById("cookie-banner");
+    if (banner) {
+        banner.classList.add("translate-y-10", "opacity-0");
+        setTimeout(() => {
+            banner.classList.add("hidden");
+        }, 500);
+    }
+}
+
+// ৫. পেজ লোড হওয়ার ২ সেকেন্ড পর ব্যানার দেখানোর লজিক
+document.addEventListener("DOMContentLoaded", function () {
+    const consent = getCookie("careline_consent");
+
+    // যদি কুকি না পাওয়া যায়, তবেই ২ সেকেন্ড পর ব্যানার দেখাবে
+    if (!consent) {
+        setTimeout(function () {
+            const banner = document.getElementById("cookie-banner");
+            if (banner) {
+                // হিডেন রিমুভ করে এনিমেশন স্টার্ট করা
+                banner.classList.remove("hidden");
+                // অল্প ডিলে দিয়ে ট্রানজিশন ট্রিগার করা (Tailwind transition এর জন্য)
+                setTimeout(() => {
+                    banner.classList.remove("translate-y-10", "opacity-0");
+                    banner.classList.add("translate-y-0", "opacity-100");
+                }, 100);
+            }
+        }, 2000); 
+    }
+});

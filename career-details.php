@@ -22,6 +22,8 @@ if (!$career) {
 
 ?>
 
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <body class="font-body text-gray-600 antialiased bg-white">
     <!-- header section -->
     <?php include('header.php') ?>
@@ -175,13 +177,14 @@ if (!$career) {
                                 <p class="text-gray-500 text-sm mb-8">Take the first step towards a rewarding career.
                                     We'll review your CV within 48 hours.</p>
 
-                                <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
+                                <form action="app/logics.php" method="POST" enctype="multipart/form-data"
+                                    class="space-y-6">
                                     <div class="space-y-4">
                                         <div>
                                             <label
                                                 class="text-[10px] uppercase font-bold text-brand tracking-widest ml-1 mb-1 block">Full
                                                 Name</label>
-                                            <input type="text" placeholder="e.g. Sarah Jenkins" required
+                                            <input type="text" name="name" placeholder="e.g. Sarah Jenkins" required
                                                 class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-lightBg/50 text-darkText font-medium">
                                         </div>
 
@@ -189,7 +192,7 @@ if (!$career) {
                                             <label
                                                 class="text-[10px] uppercase font-bold text-brand tracking-widest ml-1 mb-1 block">Email
                                                 Address</label>
-                                            <input type="email" placeholder="sarah@example.com" required
+                                            <input type="email" name="email" placeholder="sarah@example.com" required
                                                 class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-lightBg/50 text-darkText font-medium">
                                         </div>
 
@@ -197,7 +200,7 @@ if (!$career) {
                                             <label
                                                 class="text-[10px] uppercase font-bold text-brand tracking-widest ml-1 mb-1 block">Phone
                                                 Number</label>
-                                            <input type="tel" placeholder="+44 7000 000000" required
+                                            <input type="tel" name="phone" placeholder="+44 7000 000000" required
                                                 class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-lightBg/50 text-darkText font-medium">
                                         </div>
                                     </div>
@@ -224,17 +227,25 @@ if (!$career) {
                                         </div>
                                     </div>
 
-                                    <div class="pt-2">
-                                        <button type="submit"
-                                            class="w-full inline-flex items-center justify-center gap-3 px-6 py-4 border border-transparent text-base font-bold rounded-xl text-white bg-brand hover:bg-brandDark shadow-[0_15px_35px_-5px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)] transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98]">
-                                            Send Application
-                                            <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
-                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                            </svg>
-                                        </button>
+                                    <div class="mb-6">
+                                        <div class="g-recaptcha" data-sitekey="6Lfvh4UsAAAAACm42iCtE0w_JvhRQyoEwn0B5aD0"
+                                            data-callback="enableSubmitButton"
+                                            data-expired-callback="disableSubmitButton">
+                                        </div>
                                     </div>
+
+
+
+
+
+                                    <button type="submit" id="final_submit_contact_btn" disabled name="submit_data"
+                                        class="w-full py-3 bg-brand text-white font-bold rounded-xl shadow-[0_15px_30px_-5px_rgba(0,0,0,0.25)] transition-all duration-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                                        Send Application
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
                                 </form>
 
                                 <div
@@ -277,6 +288,38 @@ if (!$career) {
     <?php include('footer.php') ?>
 
 
+
+    <script>
+    const submitBtn = document.getElementById('final_submit_contact_btn');
+
+    function enableSubmitButton() {
+        submitBtn.disabled = false;
+
+        // ১. ডিসাবলড স্টাইল রিমুভ (অস্পষ্টতা এবং কার্সার ঠিক করা)
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+        // ২. আপনার প্রিমিয়াম অ্যানিমেশন এবং হোভার ইফেক্ট যুক্ত করা
+        submitBtn.classList.add(
+            'hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)]',
+            'hover:-translate-y-1',
+            'active:scale-95'
+        );
+    }
+
+    function disableSubmitButton() {
+        submitBtn.disabled = true;
+
+        // ১. ডিসাবলড স্টাইল আবার দেওয়া
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+        // ২. হোভার ইফেক্টগুলো সরিয়ে নেওয়া
+        submitBtn.classList.remove(
+            'hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)]',
+            'hover:-translate-y-1',
+            'active:scale-95'
+        );
+    }
+    </script>
     <!-- js section -->
     <script src="main.js"></script>
 </body>

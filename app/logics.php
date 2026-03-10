@@ -2303,3 +2303,124 @@ if (isset($_GET['delete_testimonial_id'])) {
     header('location:testimonials.php');
     exit();
 }
+
+
+
+
+
+
+
+
+
+
+if (isset($_POST['submit_data'])) {
+    $recaptcha_secret = "6Lfvh4UsAAAAAFUwN7iG2W9b4naWsmM-O7x4hWX3";
+    $recaptcha_response = $_POST['g-recaptcha-response'];
+
+    $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptcha_secret}&response={$recaptcha_response}");
+    $response_data = json_decode($verify);
+
+    if (!$response_data->success) {
+        $_SESSION['message_sent'] = "Error: Captcha verification failed.";
+        header('location:../careers.php');
+        exit();
+    }
+
+    // ১. ডাটা স্যানিটাইজেশন
+    $name  = htmlspecialchars($_POST['name']);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $phone = htmlspecialchars($_POST['phone']);
+    $ref_id = "#CAR-" . date("ymd") . "-" . rand(1000, 9999);
+    
+    // ২. ফাইল আপলোড হ্যান্ডলিং (CV/Resume)
+    $upload_dir = "uploads/cv/";
+    if (!is_dir($upload_dir)) { mkdir($upload_dir, 0777, true); }
+
+    $file_ext = pathinfo($_FILES['cv']['name'], PATHINFO_EXTENSION);
+    $new_file_name = "CV_" . date("Ymd_His") . "_" . rand(100, 999) . "." . $file_ext;
+    $target_file = $upload_dir . $new_file_name;
+
+    if (move_uploaded_file($_FILES['cv']['tmp_name'], $target_file)) {
+        
+        // ৩. ডাটাবেস ইনসার্ট
+        $query = "INSERT INTO career_applications (reference_id, name, email, phone, cv) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $mysqli->prepare($query);
+        $stmt->bind_param("sssss", $ref_id, $name, $email, $phone, $target_file);
+        $stmt->execute();
+        $stmt->close();
+
+        // ৪. ইমেইল কনফিগ (PHPMailer)
+        try {
+             $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'communitycareline01@gmail.com';
+            $mail->Password   = 'mvxmibrwnqbtcdfp';
+           $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
+            $mail->CharSet    = 'UTF-8';
+
+            // --- A. জব হোল্ডারের জন্য কনফার্মেশন মেইল ---
+            $mail->setFrom('communitycareline01@gmail.com', 'Community Careline Services (Bexley) Ltd');
+            $mail->addAddress($email, $name);
+            $mail->isHTML(true);
+            $mail->Subject = "Application Received - {$ref_id}";
+
+            $userBody = "
+                <body style='font-family: sans-serif; background-color: #f4f7f6; padding: 30px;'>
+                    <div style='max-width: 600px; margin: auto; background: #fff; border-radius: 15px; overflow: hidden; border: 1px solid #eee;'>
+                        <div style='background: #538d00; padding: 30px; text-align: center; color: #fff;'>
+                            <h2 style='margin: 0;'>Application Received</h2>
+                        </div>
+                        <div style='padding: 30px; color: #444;'>
+                            <p>Hi <b>{$name}</b>,</p>
+                            <p>Thank you for applying to join the <b>Community Careline Services (Bexley) Ltd</b> family. We've received your application and CV successfully.</p>
+                            <div style='background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;'>
+                                <p style='margin: 0; font-size: 12px; color: #888;'>Your Application ID:</p>
+                                <p style='margin: 5px 0 0 0; font-size: 20px; font-weight: bold; color: #538d00;'>{$ref_id}</p>
+                            </div>
+                            <p>Our recruitment team will review your profile and contact you if you are shortlisted for an interview.</p>
+                            <hr style='border: none; border-top: 1px solid #eee;'>
+                            <p style='font-size: 12px; color: #999;'>Best Regards,<br>Community Careline Services (Bexley) Ltd</p>
+                        </div>
+                    </div>
+                </body>";
+            $mail->Body = $userBody;
+            $mail->send();
+
+            // --- B. অ্যাডমিনের জন্য নোটিফিকেশন মেইল (CV Attachment সহ) ---
+            $mail->clearAllRecipients();
+            $mail->addAddress('communitycareline01@gmail.com', 'Admin Team');
+            $mail->Subject = "New Job Application: {$name} [{$ref_id}]";
+            $mail->addAttachment($target_file); // এই লাইনটি CV ফাইলটি অ্যাডমিন মেইলে ফাইল হিসেবে পাঠিয়ে দিবে
+
+            $adminBody = "
+                <body style='font-family: sans-serif; background-color: #f1f5f9; padding: 30px;'>
+                    <div style='max-width: 600px; margin: auto; background: #fff; border-radius: 10px; border: 1px solid #ddd;'>
+                        <div style='background: #111827; padding: 20px; text-align: center; color: #fff;'>
+                            <h3 style='margin: 0;'>New Candidate for Recruitment</h3>
+                        </div>
+                        <div style='padding: 30px;'>
+                            <table style='width: 100%; text-align: left; border-collapse: collapse;'>
+                                <tr><th style='padding: 10px; border-bottom: 1px solid #eee;'>Ref ID:</th><td style='padding: 10px; border-bottom: 1px solid #eee;'>{$ref_id}</td></tr>
+                                <tr><th style='padding: 10px; border-bottom: 1px solid #eee;'>Name:</th><td style='padding: 10px; border-bottom: 1px solid #eee;'>{$name}</td></tr>
+                                <tr><th style='padding: 10px; border-bottom: 1px solid #eee;'>Email:</th><td style='padding: 10px; border-bottom: 1px solid #eee;'>{$email}</td></tr>
+                                <tr><th style='padding: 10px; border-bottom: 1px solid #eee;'>Phone:</th><td style='padding: 10px; border-bottom: 1px solid #eee;'>{$phone}</td></tr>
+                            </table>
+                            <p style='margin-top: 20px; color: #666;'>* Candidate's Resume/CV is attached to this email.</p>
+                        </div>
+                    </div>
+                </body>";
+            $mail->Body = $adminBody;
+            $mail->send();
+
+            header("location:../application-success.php");
+            exit();
+
+        } catch (Exception $e) {
+            $_SESSION['message_sent'] = "Application sent, but email notification failed.";
+            header("location:../application-success.php");
+        }
+    }
+}
