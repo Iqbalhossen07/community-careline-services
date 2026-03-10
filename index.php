@@ -304,6 +304,20 @@
     <!-- about us section  -->
     <section id="about" class="py-20 md:py-32 bg-lightBg overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <?php
+            // ১. ডাটাবেস থেকে হোম অ্যাবাউট ডাটা ফেচ করা
+            $about_query = "SELECT content, image FROM home_about_content WHERE id = 1 LIMIT 1";
+            $about_result = $mysqli->query($about_query);
+            $about_data = $about_result->fetch_assoc();
+
+            // ইমেজগুলোকে অ্যারেতে কনভার্ট করা
+            $about_images = !empty($about_data['image']) ? explode(',', $about_data['image']) : [];
+
+            // প্রথম এবং দ্বিতীয় ইমেজ আলাদা করা
+            $img1 = isset($about_images[0]) ? 'app/uploads/home_about_images/' . trim($about_images[0]) : 'img/default1.jpg';
+            $img2 = isset($about_images[1]) ? 'app/uploads/home_about_images/' . trim($about_images[1]) : 'img/default2.jpg';
+            ?>
+
             <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
 
                 <div class="order-2 md:order-1 relative mt-10 md:mt-0 px-4 sm:px-0">
@@ -312,11 +326,10 @@
                     </div>
 
                     <div class="relative pb-16 pr-10 sm:pr-16">
-                        <img src="https://images.unsplash.com/photo-1576765608866-5b51046452be?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                            alt="Caregiver smiling with senior woman"
+                        <img src="<?php echo $img1; ?>" alt="Careline Primary About Image"
                             class="w-[85%] sm:w-4/5 rounded-3xl shadow-lg border-4 md:border-8 border-white object-cover h-[250px] sm:h-[350px] md:h-[400px] relative z-10 transition-transform duration-500 hover:scale-[1.02]">
 
-                        <img src="img/about1.jpg" alt="Caregiver holding hands with senior"
+                        <img src="<?php echo $img2; ?>" alt="Careline Secondary About Image"
                             class="absolute bottom-0 right-0 w-[60%] sm:w-[55%] rounded-3xl shadow-2xl border-4 md:border-8 border-lightBg object-cover h-[180px] sm:h-[250px] z-20 transition-transform duration-500 hover:scale-[1.05]">
 
                         <div
@@ -341,9 +354,8 @@
                         Who We Are
                     </span>
 
-
                     <h1
-                        class="font-heading text-2xl  md:text-4xl  font-bold text-darkText mb-4 md:mb-6 tracking-[-0.03em]">
+                        class="font-heading text-2xl md:text-4xl font-bold text-darkText mb-4 md:mb-6 tracking-[-0.03em]">
                         About Community
                         <span class="text-brand relative "> Careline Services
                             <svg class="absolute -bottom-1.5 left-0 w-full h-1.5 md:h-2 text-brand/30"
@@ -354,30 +366,15 @@
                         (Bexley) Ltd
                     </h1>
 
-                    <p class="text-lg leading-relaxed text-gray-600 mb-6">
-
-
-                        Community Careline Services (Bexley) Ltd was founded in 1994 on the belief that in today’s
-                        constantly changing world, more and more people need assistance at home. Whether it’s
-                        medication support, assistance with personal care, domestic support or shopping, we want to
-                        be the ones to offer relief and support.
-                    </p>
-
-                    <p class="text-lg leading-relaxed text-gray-600">
-                        At Community Careline Services (Bexley) Ltd, we work hard to offer personalised home
-                        services with convenience and transparency. We understand the difficulty of the demands of
-                        daily life, that’s why we’re committed to making the process affordable, convenient and
-                        tailored to you.
-                    </p>
-
-
+                    <div class="text-lg leading-relaxed text-gray-600 mb-6 font-body prose prose-sm max-w-none">
+                        <?php echo $about_data['content']; ?>
+                    </div>
 
                     <a href="about.php"
                         class="inline-flex mt-4 items-center justify-center px-4 py-2.5 md:px-6 md:py-3 border border-transparent text-sm md:text-lg font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1">
                         Read More
                     </a>
                 </div>
-
             </div>
         </div>
     </section>

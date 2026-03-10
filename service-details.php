@@ -1,4 +1,30 @@
-<?php include('head.php') ?>
+<?php include('head.php');
+
+// ১. ইউআরএল থেকে আইডি চেক করা
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    header('Location: services.php'); // আইডি না থাকলে লিস্ট পেইজে পাঠিয়ে দিবে
+    exit();
+}
+
+$id = intval($_GET['id']); // সিকিউরিটির জন্য ইনটিজারে কনভার্ট করা
+
+// ২. ডাটাবেস থেকে ওই নির্দিষ্ট সার্ভিসের ডাটা আনা
+$stmt = $mysqli->prepare("SELECT * FROM services WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$service = $result->fetch_assoc();
+
+// যদি ডাটা না পাওয়া যায়
+if (!$service) {
+    header('Location: services.php');
+    exit();
+}
+
+// ইমেজ পাথ হ্যান্ডেল করা (প্রথম ইমেজটি মেইন ব্যানার হিসেবে দেখাবে)
+$images_array = !empty($service['image']) ? explode(',', $service['image']) : [];
+$display_image = !empty($images_array) ? trim($images_array[0]) : '';
+?>
 
 <body class="font-body text-gray-600 antialiased bg-white">
     <!-- header section -->
@@ -20,10 +46,12 @@
                     <li><a href="services.php" class="text-gray-400 hover:text-brand transition-colors">Services</a>
                     </li>
                     <li class="text-gray-600">/</li>
-                    <li class="text-brand font-bold uppercase tracking-widest text-[11px] md:text-sm">Respite Care</li>
+                    <li class="text-brand font-bold uppercase tracking-widest text-[11px] md:text-sm">Services Details
+                    </li>
                 </ol>
             </nav>
-            <h1 class="font-heading text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight">Respite Care Services
+            <h1 class="font-heading text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight">
+                <?php echo htmlspecialchars($service['title']); ?>
             </h1>
             <p class="text-gray-300 text-lg max-w-2xl">Premium, compassionate care tailored to your everyday life,
                 ensuring independence at home.</p>
@@ -38,82 +66,29 @@
                 <div class="lg:col-span-8">
                     <div
                         class="relative rounded-3xl overflow-hidden mb-12 shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-8 border-white ring-1 ring-black/5">
-                        <img src="img/s1.jpg" alt="Respite Caregiving" class="w-full h-[400px] object-cover">
+                        <?php if (!empty($display_image)): ?>
+                        <img src="app/uploads/services_images/<?php echo htmlspecialchars($display_image); ?>"
+                            alt="<?php echo htmlspecialchars($service['title']); ?>"
+                            class="w-full h-[400px] object-cover">
+                        <?php else: ?>
+                        <div class="w-full h-[400px] bg-gray-200 flex items-center justify-center">
+                            <i class="fa-solid fa-image text-6xl text-gray-300"></i>
+                        </div>
+                        <?php endif; ?>
                     </div>
 
                     <div class="space-y-8">
                         <div>
-                            <h2 class="font-heading text-3xl font-bold text-darkText mb-4">A temporary break, a lifelong
-                                peace of mind.</h2>
-                            <p class="text-lg leading-relaxed text-gray-600">
-                                Caring for a loved one is a rewarding but physically and emotionally demanding
-                                responsibility. At Careline, our <strong>Respite Care Services</strong> are designed to
-                                provide family caregivers with the essential break they need, while ensuring their loved
-                                ones receive the highest quality professional care in a familiar environment.
-                            </p>
-                        </div>
+                            <h2 class="font-heading text-3xl font-bold text-darkText mb-4">
+                                <?php echo htmlspecialchars($service['title']); ?>
+                            </h2>
 
-                        <div class="grid md:grid-cols-2 gap-6 py-6">
-                            <div
-                                class="bg-lightBg p-6 rounded-2xl border border-gray-100 group hover:border-brand/30 transition-all">
-                                <div
-                                    class="w-12 h-12 bg-brand/10 rounded-xl flex items-center justify-center text-brand mb-4">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <h4 class="font-bold text-darkText mb-2">Short-term Support</h4>
-                                <p class="text-sm">From a few hours a week to several weeks of live-in support.</p>
+                            <div class="text-lg leading-relaxed text-gray-600 prose prose-brand max-w-none font-body">
+                                <?php
+                                // এখানে htmlspecialchars ব্যবহার করবেন না কারণ ডেসক্রিপশনে CKEditor এর HTML ট্যাগ আছে
+                                echo $service['description'];
+                                ?>
                             </div>
-                            <div
-                                class="bg-lightBg p-6 rounded-2xl border border-gray-100 group hover:border-brand/30 transition-all">
-                                <div
-                                    class="w-12 h-12 bg-brand/10 rounded-xl flex items-center justify-center text-brand mb-4">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <h4 class="font-bold text-darkText mb-2">Safe Recruitment</h4>
-                                <p class="text-sm">Every carer is fully vetted, DBS checked, and professionally trained.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="prose prose-lg max-w-none text-gray-600">
-                            <h3 class="font-heading text-2xl font-bold text-darkText">What is included in Respite Care?
-                            </h3>
-                            <p>Our respite care is completely flexible. Whether you need cover for a family holiday, a
-                                medical appointment, or simply some time to rest, we tailor our approach to suit your
-                                routine.</p>
-                            <ul class="space-y-4 my-6">
-                                <li class="flex items-start gap-3">
-                                    <span
-                                        class="w-6 h-6 bg-brand/20 text-brand rounded-full flex items-center justify-center shrink-0 mt-1 text-xs">✔</span>
-                                    <span><strong>Personal Care:</strong> Assistance with bathing, dressing, and
-                                        grooming.</span>
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <span
-                                        class="w-6 h-6 bg-brand/20 text-brand rounded-full flex items-center justify-center shrink-0 mt-1 text-xs">✔</span>
-                                    <span><strong>Medication Management:</strong> Timely administration and monitoring
-                                        of health needs.</span>
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <span
-                                        class="w-6 h-6 bg-brand/20 text-brand rounded-full flex items-center justify-center shrink-0 mt-1 text-xs">✔</span>
-                                    <span><strong>Companionship:</strong> Social interaction and mental wellbeing
-                                        support.</span>
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <span
-                                        class="w-6 h-6 bg-brand/20 text-brand rounded-full flex items-center justify-center shrink-0 mt-1 text-xs">✔</span>
-                                    <span><strong>Household Support:</strong> Light cleaning, meal preparation, and
-                                        shopping.</span>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -125,13 +100,13 @@
                             <p class="text-sm mb-6 text-gray-500">Need immediate help? Fill out your phone number and we
                                 will call you.</p>
                             <form class="space-y-4">
-                                <input type="text" placeholder="Your Name"
-                                    class="w-full px-4 py-3 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all">
-                                <input type="tel" placeholder="Phone Number"
-                                    class="w-full px-4 py-3 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all">
-                                <button
-                                    class="w-full py-3 bg-brand text-white font-bold rounded-md shadow-lg shadow-black/20 hover:bg-brandDark hover:-translate-y-1 transition-all">Submit
-                                    Request</button>
+
+
+                                <a href="contact.php"
+                                    class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1">
+                                    Submit
+                                    Request
+                                </a>
                             </form>
                         </div>
 
