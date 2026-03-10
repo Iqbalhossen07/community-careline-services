@@ -99,86 +99,62 @@
                     routines.</p>
             </div>
 
+            <?php
+            // ১. ডাটাবেস থেকে সার্ভিসগুলো নিয়ে আসা
+            $service_result = $mysqli->query("SELECT * FROM services ORDER BY id DESC");
+            $all_services = [];
+            if ($service_result) {
+                $all_services = $service_result->fetch_all(MYSQLI_ASSOC);
+            }
+            ?>
+
             <div class="grid md:grid-cols-3 gap-8">
-
+                <?php if (!empty($all_services)): ?>
+                <?php foreach ($all_services as $service):
+                        // ইমেজ স্ট্রিং থেকে প্রথম ইমেজটি নেওয়া (যদি একাধিক থাকে)
+                        $service_images = explode(',', $service['image']);
+                        $first_image = trim($service_images[0]);
+                    ?>
                 <div
-                    class="bg-white rounded-md  border border-gray-100 shadow-md shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 group flex flex-col">
+                    class="bg-white rounded-md border border-gray-100 shadow-md shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 group flex flex-col">
                     <div
-                        class="relative h-60 rounded-md overflow-hidden border-[6px] border-white shadow-sm ring-1 ring-black/5 ">
-                        <img src="img/s1.jpg" alt="Respite Care Services"
+                        class="relative h-60 rounded-md overflow-hidden border-[6px] border-white shadow-sm ring-1 ring-black/5">
+                        <?php if (!empty($first_image)): ?>
+                        <img src="app/uploads/services_images/<?php echo htmlspecialchars($first_image); ?>"
+                            alt="<?php echo htmlspecialchars($service['title']); ?>"
                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                            <i class="fa-solid fa-image text-4xl"></i>
+                        </div>
+                        <?php endif; ?>
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-darkText/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         </div>
                     </div>
+
                     <div class="flex-1 flex flex-col p-5">
                         <h3
                             class="font-heading text-xl md:text-xl font-bold text-darkText mb-3 uppercase tracking-tight">
-                            Respite Care Services</h3>
-                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1">Temporary, high-quality
-                            care to provide family caregivers a much-needed break, ensuring your loved ones remain safe
-                            and comfortable.</p>
-                        <a href="service-details.php"
+                            <?php echo htmlspecialchars($service['title']); ?>
+                        </h3>
+
+                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1 font-body">
+                            <?php echo strip_tags($service['description']); ?>
+                        </p>
+
+                        <a href="service-details.php?id=<?php echo $service['id']; ?>"
                             class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1">
                             Learn more
                         </a>
                     </div>
                 </div>
-
-                <div
-                    class="bg-white rounded-md  border border-gray-100 shadow-md shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 group flex flex-col">
-                    <div
-                        class="relative h-60 rounded-md overflow-hidden border-[6px] border-white shadow-sm ring-1 ring-black/5 ">
-                        <img src="img/s2.jpg" alt="Respite Care Services"
-                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-darkText/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        </div>
-                    </div>
-                    <div class="flex-1 flex flex-col p-5">
-                        <h3
-                            class="font-heading text-xl md:text-xl font-bold text-darkText mb-3 uppercase tracking-tight">
-                            Home Care Services</h3>
-                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1">Compassionate daily
-                            assistance tailored to your specific needs, enabling you to live happily and independently
-                            in your own home.</p>
-                        <a href="service-details.php"
-                            class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1">
-                            Learn more
-                        </a>
-                    </div>
+                <?php endforeach; ?>
+                <?php else: ?>
+                <div class="col-span-full text-center py-10">
+                    <p class="text-gray-400">No services found.</p>
                 </div>
-
-                <div
-                    class="bg-white rounded-md  border border-gray-100 shadow-md shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 group flex flex-col">
-                    <div
-                        class="relative h-60 rounded-md overflow-hidden border-[6px] border-white shadow-sm ring-1 ring-black/5 ">
-                        <img src="img/s3.jpg" alt="Respite Care Services"
-                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-darkText/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        </div>
-                    </div>
-                    <div class="flex-1 flex flex-col p-5">
-                        <h3
-                            class="font-heading text-xl md:text-xl font-bold text-darkText mb-3 uppercase tracking-tight">
-                            Safer Recruitment</h3>
-                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1">Rigorous vetting and
-                            comprehensive training processes to ensure only the most qualified and trustworthy
-                            professionals enter your home.</p>
-                        <a href="service-details.php"
-                            class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1">
-                            Learn more
-                        </a>
-                    </div>
-                </div>
-
-
-
-
-
-
-
+                <?php endif; ?>
             </div>
 
             <div class="mt-16 text-center">
