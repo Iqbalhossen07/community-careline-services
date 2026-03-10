@@ -9,10 +9,24 @@
     <section id="home"
         class="relative h-[80vh] md:h-[100vh] min-h-[500px] md:min-h-[650px] overflow-hidden bg-darkText">
 
+        <?php
+        // ১. ডাটাবেস থেকে হিরো ইমেজগুলো নিয়ে আসা
+        $hero_result = $mysqli->query("SELECT image FROM hero_images ORDER BY id DESC");
+        $hero_slides = [];
+        if ($hero_result) {
+            $hero_slides = $hero_result->fetch_all(MYSQLI_ASSOC);
+        }
+        ?>
+
         <div id="hero-slider" class="relative w-full h-full">
+            <?php if (!empty($hero_slides)): ?>
+            <?php foreach ($hero_slides as $index => $slide): ?>
+            <div
+                class="slide absolute inset-0 w-full h-full transition-opacity duration-1000 <?php echo $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'; ?>">
 
-            <div class="slide absolute inset-0 w-full h-full transition-opacity duration-1000 opacity-100 z-10">
-                <img src="img/s3.jpg" alt="Caregiver" class="absolute inset-0 w-full h-full object-cover">
+                <img src="app/uploads/hero_images/<?php echo htmlspecialchars($slide['image']); ?>" alt="Caregiver"
+                    class="absolute inset-0 w-full h-full object-cover">
+
                 <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
 
                 <div
@@ -27,13 +41,11 @@
                             Get the help and <span class="text-brand">home support</span> you need.
                         </h1>
 
-
-
-
                         <p class="text-base md:text-xl text-gray-200 mb-6 md:mb-8 leading-relaxed max-w-xl">
                             We provide premium, compassionate care in the comfort of your own home. Our dedicated
                             professionals ensure your independence and well-being.
                         </p>
+
                         <div class="flex flex-wrap gap-3 md:gap-4">
                             <a href="contact.php"
                                 class="px-6 py-3 md:px-8 md:py-4 bg-brand text-white text-sm md:text-base font-bold rounded-xl shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:bg-brandDark hover:-translate-y-1 transition-all duration-300">
@@ -47,44 +59,12 @@
                     </div>
                 </div>
             </div>
-
-            <div class="slide absolute inset-0 w-full h-full transition-opacity duration-1000 opacity-0 z-0">
-                <img src="img/s1.jpg" alt="Professional Care" class="absolute inset-0 w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
-
-                <div
-                    class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center pt-28 md:pt-32">
-                    <div class="max-w-2xl">
-                        <span
-                            class="inline-flex items-center gap-2 text-white font-bold tracking-widest uppercase text-[10px] md:text-xs px-4 py-2 bg-brand/90 backdrop-blur-sm rounded-full mb-4 md:mb-6 shadow-lg">
-                            Trusted UK Care Providers
-                        </span>
-                        <h1
-                            class="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 md:mb-6 leading-[1.1]">
-                            Get the help and <span class="text-brand">home support</span> you need.
-                        </h1>
-
-
-
-
-                        <p class="text-base md:text-xl text-gray-200 mb-6 md:mb-8 leading-relaxed max-w-xl">
-                            We provide premium, compassionate care in the comfort of your own home. Our dedicated
-                            professionals ensure your independence and well-being.
-                        </p>
-                        <div class="flex flex-wrap gap-3 md:gap-4">
-                            <a href="contact.php"
-                                class="px-6 py-3 md:px-8 md:py-4 bg-brand text-white text-sm md:text-base font-bold rounded-xl shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:bg-brandDark hover:-translate-y-1 transition-all duration-300">
-                                Book Assessment
-                            </a>
-                            <a href="services.php"
-                                class="px-6 py-3 md:px-8 md:py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white text-sm md:text-base font-bold rounded-xl hover:bg-white hover:text-darkText hover:-translate-y-1 transition-all duration-300">
-                                Our Services
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <?php endforeach; ?>
+            <?php else: ?>
+            <div class="slide absolute inset-0 w-full h-full opacity-100 z-10 bg-gray-900">
+                <div class="relative z-20 flex items-center justify-center h-full text-white">No Hero Images Found</div>
             </div>
-
+            <?php endif; ?>
         </div>
 
         <div class="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-3">
