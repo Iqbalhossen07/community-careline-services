@@ -118,10 +118,9 @@
               <p>
                   ©2021 by Community Careline Services (Medway) Ltd. Proudly created with Wix.com</p>
               <div class="flex space-x-4 mt-4 md:mt-0">
-                  <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                  <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                  <a href="privacy-policy.php" class="hover:text-white transition-colors">Privacy Policy</a>
+                  <a href="terms-of-conditions.php" class="hover:text-white transition-colors">Terms & Conditions</a>
               </div>
-              <p class="text-xs text-gray-600 mt-4 md:mt-0">Crafted with care by Sets Tech</p>
           </div>
       </div>
   </footer>

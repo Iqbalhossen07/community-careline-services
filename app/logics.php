@@ -1621,7 +1621,7 @@ if (isset($_POST['send_message'])) {
         // **********************************************************
         // A. ইউজার কনফার্মেশন ইমেল
         // **********************************************************
-        $mail->setFrom('communitycareline01@gmail.com', 'Careline Studio');
+        $mail->setFrom('communitycareline01@gmail.com', 'Community Careline Services (Bexley) Ltd');
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
         $mail->Subject = "We received your inquiry regarding {$service} [{$ref_id}]";
@@ -1641,7 +1641,7 @@ if (isset($_POST['send_message'])) {
                 <h2 style=\"color: {$darkColor}; font-family: {$fontHeading}; margin-top: 0; font-size: 22px;\">Dear " . htmlspecialchars($name) . ",</h2>
                 
                 <p style=\"line-height: 1.8; font-size: 16px;\">
-                    Thank you for reaching out to <strong>Community Careline Services</strong>. We have successfully received your inquiry regarding our <span style=\"color: {$primaryColor}; font-weight: bold;\">" . htmlspecialchars($service) . "</span>.
+                    Thank you for reaching out to <strong>Community Careline Services (Bexley) Ltd</strong>. We have successfully received your inquiry regarding our <span style=\"color: {$primaryColor}; font-weight: bold;\">" . htmlspecialchars($service) . "</span>.
                 </p>
 
                 <p style=\"line-height: 1.8; font-size: 16px;\">
@@ -1661,7 +1661,7 @@ if (isset($_POST['send_message'])) {
                 <hr style=\"border: none; border-top: 1px solid #f1f5f9; margin: 30px 0;\">
                 
                 <p style=\"margin-bottom: 5px; color: #64748b; font-size: 14px;\">Warm regards,</p>
-                <p style=\"margin-top: 0; font-family: {$fontHeading}; font-weight: bold; color: {$darkColor}; font-size: 16px;\">The Careline Team</p>
+                <p style=\"margin-top: 0; font-family: {$fontHeading}; font-weight: bold; color: {$darkColor}; font-size: 16px;\">Community Careline Services (Bexley) Ltd Team</p>
             </div>
 
             <div style=\"background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #f1f5f9;\">
@@ -1699,7 +1699,7 @@ if (isset($_POST['send_message'])) {
 
             <div style=\"padding: 35px; font-family: {$fontBody};\">
                 <p style=\"color: #64748b; font-size: 15px; margin-bottom: 25px;\">
-                    Hello Admin, a new service request has been submitted through the <strong>Community Careline</strong> website.
+                    Hello Admin, a new service request has been submitted through the <strong>Community Careline Services (Bexley) Ltd</strong> website.
                 </p>
 
                 <table style=\"width: 100%; border-collapse: collapse; margin-bottom: 25px; background-color: #f8fafc; border-radius: 8px; overflow: hidden;\">
@@ -1736,7 +1736,7 @@ if (isset($_POST['send_message'])) {
 
             <div style=\"background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #edf2f7;\">
                 <p style=\"margin: 0; font-family: {$fontBody}; font-size: 11px; color: #94a3b8;\">
-                    This is an automated notification from the Community Careline Website Portal.
+                    This is an automated notification from Community Careline Services (Bexley) Ltd Website Portal.
                 </p>
             </div>
         </div>

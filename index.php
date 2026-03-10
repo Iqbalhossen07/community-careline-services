@@ -1,4 +1,5 @@
 <?php include('head.php') ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <body class="font-body text-gray-600 antialiased bg-white">
     <!-- header section  -->
@@ -809,32 +810,32 @@
                     <p class="text-gray-500 mb-5 text-base">Fill out the form below and our UK advisory team will call
                         you back within 24 hours.</p>
 
-                    <form class="space-y-4">
+                    <?php
+                    // ১. সার্ভিসগুলো ডাটাবেস থেকে নিয়ে আসা
+                    $form_services_query = "SELECT title FROM services ORDER BY title ASC";
+                    $form_services_result = $mysqli->query($form_services_query);
+                    ?>
+                    <form action="app/logics.php" method="post" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-bold text-darkText mb-1.5">First Name</label>
-                                <input type="text"
+                                <label class="block text-sm font-bold text-darkText mb-1.5">Name</label>
+                                <input type="text" name="name"
                                     class="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 placeholder-gray-400"
                                     placeholder="e.g. John">
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-darkText mb-1.5">Last Name</label>
-                                <input type="text"
-                                    class="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 placeholder-gray-400"
-                                    placeholder="e.g. Smith">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
                                 <label class="block text-sm font-bold text-darkText mb-1.5">Phone Number</label>
-                                <input type="tel"
+                                <input type="tel" name="phone"
                                     class="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 placeholder-gray-400"
                                     placeholder="0800 123 456">
                             </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+
                             <div>
                                 <label class="block text-sm font-bold text-darkText mb-1.5">Email Address</label>
-                                <input type="email"
+                                <input type="email" name="email"
                                     class="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 placeholder-gray-400"
                                     placeholder="john@example.com">
                             </div>
@@ -843,14 +844,15 @@
                         <div>
                             <label class="block text-sm font-bold text-darkText mb-1.5">Type of Care Required</label>
                             <div class="relative">
-                                <select
-                                    class="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 appearance-none cursor-pointer">
-                                    <option value="" disabled selected>Select a service...</option>
-                                    <option value="personal">Personal Care</option>
-                                    <option value="live-in">Live-in Care</option>
-                                    <option value="respite">Respite Care</option>
-                                    <option value="companionship">Companionship</option>
-                                    <option value="other">Not Sure / Other</option>
+
+                                <select name="service" required
+                                    class="w-full px-5 py-3.5 rounded-xl border border-gray-200 outline-none focus:border-brand transition-all bg-lightBg/30 text-gray-500 appearance-none cursor-pointer">
+                                    <option value="" disabled selected>Select Service</option>
+                                    <?php while ($row = $form_services_result->fetch_assoc()): ?>
+                                    <option value="<?php echo htmlspecialchars($row['title']); ?>">
+                                        <?php echo htmlspecialchars($row['title']); ?>
+                                    </option>
+                                    <?php endwhile; ?>
                                 </select>
                                 <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
@@ -864,23 +866,30 @@
 
                         <div>
                             <label class="block text-sm font-bold text-darkText mb-1.5">How can we help?
-                                (Optional)</label>
-                            <textarea rows="2"
+                            </label>
+                            <textarea rows="2" name="message"
                                 class="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 placeholder-gray-400 resize-none"
                                 placeholder="Briefly describe your needs..."></textarea>
                         </div>
 
+                        <div class="mb-6">
+                            <div class="g-recaptcha" data-sitekey="6Lfvh4UsAAAAACm42iCtE0w_JvhRQyoEwn0B5aD0"
+                                data-callback="enableSubmitButton" data-expired-callback="disableSubmitButton">
+                            </div>
+                        </div>
+
                         <div class="pt-1">
-                            <button type="submit"
-                                class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1">
-                                Request Callback
+                            <button type="submit" id="final_submit_contact_btn" disabled name="send_message"
+                                class="w-full py-3 bg-brand text-white font-bold rounded-xl shadow-[0_15px_30px_-5px_rgba(0,0,0,0.25)] transition-all duration-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                                Send Message
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                                </svg>
                             </button>
                         </div>
 
-                        <p class="text-[11px] text-center text-gray-400 mt-2">
-                            By submitting this form, you agree to our <a href="#"
-                                class="text-brand hover:underline">Privacy Policy</a>.
-                        </p>
+
                     </form>
                 </div>
 
@@ -892,6 +901,37 @@
     <!-- footer section  -->
     <?php include('footer.php') ?>
 
+    <script>
+    const submitBtn = document.getElementById('final_submit_contact_btn');
+
+    function enableSubmitButton() {
+        submitBtn.disabled = false;
+
+        // ১. ডিসাবলড স্টাইল রিমুভ (অস্পষ্টতা এবং কার্সার ঠিক করা)
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+        // ২. আপনার প্রিমিয়াম অ্যানিমেশন এবং হোভার ইফেক্ট যুক্ত করা
+        submitBtn.classList.add(
+            'hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)]',
+            'hover:-translate-y-1',
+            'active:scale-95'
+        );
+    }
+
+    function disableSubmitButton() {
+        submitBtn.disabled = true;
+
+        // ১. ডিসাবলড স্টাইল আবার দেওয়া
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+        // ২. হোভার ইফেক্টগুলো সরিয়ে নেওয়া
+        submitBtn.classList.remove(
+            'hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)]',
+            'hover:-translate-y-1',
+            'active:scale-95'
+        );
+    }
+    </script>
     <!-- js section -->
     <script src="main.js"></script>
 </body>
