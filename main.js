@@ -232,3 +232,64 @@ document.querySelectorAll(".faq-btn").forEach((button) => {
     }
   });
 });
+
+
+// testimonial
+function openTestimonialModal(name, designation, description) {
+  const modal = document.getElementById("testiModal");
+  const modalContent = document.getElementById("modalContent");
+  const marquee = document.querySelector(".animate-marquee"); // স্লাইডার সিলেক্ট করা
+
+  // ১. স্লাইডার পজ করা
+  if (marquee) {
+    marquee.style.animationPlayState = "paused";
+  }
+
+  // ২. ডাটা সেট করা
+  document.getElementById("modalName").innerText = name;
+  document.getElementById("modalDesignation").innerText = designation;
+  document.getElementById("modalDes").innerText = `"${description}"`;
+
+  const initials = name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+  document.getElementById("modalInitials").innerText = initials;
+
+  // ৩. মডাল দেখানো (এটি এখন <body> এর চাইল্ড হবে যাতে ব্লার ঠিকঠাক কাজ করে)
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+
+  setTimeout(() => {
+    modalContent.classList.remove("scale-95", "opacity-0");
+    modalContent.classList.add("scale-100", "opacity-100");
+  }, 10);
+}
+
+function closeTestimonialModal() {
+  const modal = document.getElementById("testiModal");
+  const modalContent = document.getElementById("modalContent");
+  const marquee = document.querySelector(".animate-marquee");
+
+  modalContent.classList.remove("scale-100", "opacity-100");
+  modalContent.classList.add("scale-95", "opacity-0");
+
+  setTimeout(() => {
+    modal.classList.remove("flex");
+    modal.classList.add("hidden");
+    // স্লাইডার আবার চালু করা
+    if (marquee) {
+      marquee.style.animationPlayState = "running";
+    }
+  }, 300);
+}
+
+// বাইরের জায়গায় ক্লিক করলে মডাল ক্লোজ হবে
+window.onclick = function(event) {
+    const modal = document.getElementById('testiModal');
+    if (event.target == modal) {
+        closeTestimonialModal();
+    }
+}

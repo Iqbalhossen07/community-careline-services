@@ -504,6 +504,124 @@
     </section>
 
 
+    <!-- testimonial section -->
+    <section class="py-20 bg-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+
+
+                <span
+                    class="inline-flex items-center gap-2 text-brandDark font-bold tracking-widest uppercase text-xs max-w-2xl px-4 py-1.5 bg-brand/10 rounded-full mb-2">
+                    Testimonials
+                </span>
+
+
+
+
+                <h1 class="font-heading text-2xl  md:text-4xl  font-bold text-darkText mb-4 md:mb-6 tracking-[-0.03em]">
+                    Trusted
+                    <span class="text-brand relative ">by UK
+                        <svg class="absolute -bottom-1.5 left-0 w-full h-1.5 md:h-2 text-brand/30" viewBox="0 0 100 10"
+                            preserveAspectRatio="none">
+                            <path d="M0 5 L100 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    Families
+                </h1>
+            </div>
+        </div>
+
+        <div class="relative w-full overflow-hidden pb-8">
+
+            <div
+                class="absolute top-0 left-0 w-20 md:w-40 h-full bg-gradient-to-r from-white to-transparent z-20 pointer-events-none">
+            </div>
+
+            <div
+                class="absolute top-0 right-0 w-20 md:w-40 h-full bg-gradient-to-l from-white to-transparent z-20 pointer-events-none">
+            </div>
+
+            <div class="animate-marquee gap-6 px-4">
+
+                <?php
+                // ডাটাবেস থেকে টেস্টমোনিয়াল নিয়ে আসা (শুধুমাত্র active স্ট্যাটাসগুলো)
+                $testi_result = $mysqli->query("SELECT * FROM testimonials WHERE status = 1 ORDER BY id DESC");
+                $testimonials = $testi_result->fetch_all(MYSQLI_ASSOC);
+                ?>
+
+                <?php if (!empty($testimonials)): ?>
+                <?php foreach ($testimonials as $row):
+                        $full_text = strip_tags($row['t_des']);
+                        $char_limit = 50; // এই লিমিটের বেশি হলে Read More দেখাবে
+                        $name_parts = explode(' ', $row['t_name']);
+                        $initials = strtoupper(substr($name_parts[0], 0, 1) . (isset($name_parts[1]) ? substr($name_parts[1], 0, 1) : ''));
+                    ?>
+                <div
+                    class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex-shrink-0 flex flex-col h-full">
+
+                    <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
+
+                    <div class="flex-1">
+                        <p class="text-gray-600 text-base italic mb-2 description">
+                            "<?php echo $full_text; ?>"
+                        </p>
+
+                        <?php if (strlen($full_text) > $char_limit): ?>
+                        <button
+                            onclick="openTestimonialModal('<?php echo addslashes($row['t_name']); ?>', '<?php echo addslashes($row['t_designation']); ?>', '<?php echo addslashes($full_text); ?>')"
+                            class="text-brand text-xs font-bold hover:underline mb-6">
+                            Read More...
+                        </button>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="flex items-center gap-4 mt-auto">
+                        <div
+                            class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
+                            <?php echo $initials; ?></div>
+                        <div>
+                            <h4 class="font-bold text-darkText font-heading leading-tight">
+                                <?php echo htmlspecialchars($row['t_name']); ?></h4>
+                            <span
+                                class="text-sm text-gray-500"><?php echo htmlspecialchars($row['t_designation']); ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <div id="testiModal"
+                class="fixed inset-0 z-[9999] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-md">
+                <div id="modalContent"
+                    class="bg-white w-full max-w-lg rounded-3xl p-10 shadow-2xl transition-all duration-300 transform scale-95 opacity-0 relative">
+
+                    <button onclick="closeTestimonialModal()"
+                        class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-800 hover:bg-brand hover:text-white transition-all duration-200 z-[10000]">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+
+                    <div class="flex gap-1 text-brand mb-4">★★★★★</div>
+
+                    <p id="modalDes" class="text-gray-700 text-lg italic leading-relaxed mb-8 font-body"></p>
+
+                    <div class="flex items-center gap-4 border-t pt-6">
+                        <div id="modalInitials"
+                            class="w-14 h-14 rounded-full bg-brand/10 flex items-center justify-center text-brand font-bold text-xl uppercase">
+                        </div>
+                        <div>
+                            <h4 id="modalName" class="font-bold text-darkText text-xl font-heading"></h4>
+                            <span id="modalDesignation" class="text-sm text-gray-500 font-body"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        </div>
+    </section>
+
     <!-- blog section  -->
     <section id="blog" class="py-20 bg-lightBg">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
@@ -720,395 +838,7 @@
     </section>
 
 
-    <!-- testimonial section -->
-    <section class="py-20 bg-white relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="text-center mb-16">
 
-
-                <span
-                    class="inline-flex items-center gap-2 text-brandDark font-bold tracking-widest uppercase text-xs max-w-2xl px-4 py-1.5 bg-brand/10 rounded-full mb-2">
-                    Testimonials
-                </span>
-
-
-
-
-                <h1 class="font-heading text-2xl  md:text-4xl  font-bold text-darkText mb-4 md:mb-6 tracking-[-0.03em]">
-                    Trusted
-                    <span class="text-brand relative ">by UK
-                        <svg class="absolute -bottom-1.5 left-0 w-full h-1.5 md:h-2 text-brand/30" viewBox="0 0 100 10"
-                            preserveAspectRatio="none">
-                            <path d="M0 5 L100 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                    </span>
-                    Families
-                </h1>
-            </div>
-        </div>
-
-        <div class="relative w-full overflow-hidden pb-8">
-
-            <div
-                class="absolute top-0 left-0 w-20 md:w-40 h-full bg-gradient-to-r from-white to-transparent z-20 pointer-events-none">
-            </div>
-
-            <div
-                class="absolute top-0 right-0 w-20 md:w-40 h-full bg-gradient-to-l from-white to-transparent z-20 pointer-events-none">
-            </div>
-
-            <div class="animate-marquee gap-6 px-4">
-
-                <div class="flex gap-6">
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"The carers are incredibly punctual,
-                            polite, and treat my mother with such dignity. Careline has taken a huge weight off our
-                            family's shoulders."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                SJ</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Sarah Jenkins</h4>
-                                <span class="text-sm text-gray-500">London, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Professional from the very first phone
-                            call. The bespoke care plan perfectly matched my husband's complex needs. Highly
-                            recommended."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                DT</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">David T.</h4>
-                                <span class="text-sm text-gray-500">Manchester, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Careline provided live-in care for my
-                            father, and the peace of mind it gave us was invaluable. The staff truly care about what
-                            they do."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                EW</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Emma W.</h4>
-                                <span class="text-sm text-gray-500">Birmingham, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Such a compassionate team. They go above
-                            and beyond what is expected every single day. We couldn't have asked for better support."
-                        </p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                JL</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">James L.</h4>
-                                <span class="text-sm text-gray-500">Bristol, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"The level of detail in their care plans
-                            is outstanding. Truly a premium service that treats clients like family."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                OH</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Olivia H.</h4>
-                                <span class="text-sm text-gray-500">Leeds, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Finding reliable care was stressful until
-                            we found Careline. The caregivers are brilliant. I couldn't recommend them more highly."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                MD</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Mark D.</h4>
-                                <span class="text-sm text-gray-500">Surrey, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Our carer feels like part of the family
-                            now. The companionship she provides to my mum is beautiful to witness."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                CB</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Chloe B.</h4>
-                                <span class="text-sm text-gray-500">Kent, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Exceptional service from day one. They
-                            made sure my uncle was completely comfortable and safe during his recovery at home."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                RM</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Richard M.</h4>
-                                <span class="text-sm text-gray-500">Essex, UK</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-6">
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"The carers are incredibly punctual,
-                            polite, and treat my mother with such dignity. Careline has taken a huge weight off our
-                            family's shoulders."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                SJ</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Sarah Jenkins</h4>
-                                <span class="text-sm text-gray-500">London, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Professional from the very first phone
-                            call. The bespoke care plan perfectly matched my husband's complex needs. Highly
-                            recommended."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                DT</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">David T.</h4>
-                                <span class="text-sm text-gray-500">Manchester, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Careline provided live-in care for my
-                            father, and the peace of mind it gave us was invaluable. The staff truly care about what
-                            they do."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                EW</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Emma W.</h4>
-                                <span class="text-sm text-gray-500">Birmingham, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Such a compassionate team. They go above
-                            and beyond what is expected every single day. We couldn't have asked for better support."
-                        </p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                JL</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">James L.</h4>
-                                <span class="text-sm text-gray-500">Bristol, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"The level of detail in their care plans
-                            is outstanding. Truly a premium service that treats clients like family."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                OH</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Olivia H.</h4>
-                                <span class="text-sm text-gray-500">Leeds, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Finding reliable care was stressful until
-                            we found Careline. The caregivers are brilliant. I couldn't recommend them more highly."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                MD</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Mark D.</h4>
-                                <span class="text-sm text-gray-500">Surrey, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Our carer feels like part of the family
-                            now. The companionship she provides to my mum is beautiful to witness."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                CB</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Chloe B.</h4>
-                                <span class="text-sm text-gray-500">Kent, UK</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="w-[350px] md:w-[400px] bg-white p-8 rounded-2xl shadow-lg shadow-black/5 border border-gray-100 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 cursor-default flex-shrink-0">
-                        <svg class="absolute top-6 right-6 w-10 h-10 text-brand/10" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <div class="flex gap-1 text-brand mb-4 text-sm">★★★★★</div>
-                        <p class="text-gray-600 text-base italic mb-8 flex-1">"Exceptional service from day one. They
-                            made sure my uncle was completely comfortable and safe during his recovery at home."</p>
-                        <div class="flex items-center gap-4 mt-auto">
-                            <div
-                                class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-lg">
-                                RM</div>
-                            <div>
-                                <h4 class="font-bold text-darkText font-heading leading-tight">Richard M.</h4>
-                                <span class="text-sm text-gray-500">Essex, UK</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- contact form section  -->
     <section id="contact" class="py-20 bg-white relative overflow-hidden">

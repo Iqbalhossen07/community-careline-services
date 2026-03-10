@@ -21,7 +21,14 @@
 
 .description {
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* কয় লাইন দেখাবে */
+  -webkit-line-clamp: 3; /* ৩ লাইন সেট করা হলো */
   -webkit-box-orient: vertical;  
-  overflow: hidden; /* এটি না থাকলে বাকি লেখাগুলো নিচে দেখা যাবে */
+  overflow: hidden;
+  line-height: 1.6em;
+  max-height: 4.8em; /* line-height * 3 */
+}
+
+/* মডাল ওপেন হলে ব্লার করার জন্য */
+#testiModal {
+    transition: opacity 0.3s ease-in-out;
 }
