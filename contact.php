@@ -29,6 +29,21 @@
     <!-- phone, email location section -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <?php
+            // ১. ডাটাবেস থেকে কন্টাক্ট ডিটেইলস নিয়ে আসা (সবশেষ এন্ট্রিটি)
+            $contact_query = "SELECT location, phone, email FROM contact_details ORDER BY id DESC LIMIT 1";
+            $contact_result = $mysqli->query($contact_query);
+            $contact_info = $contact_result->fetch_assoc();
+
+            // ডাটা না থাকলে ডিফল্ট ভ্যালু সেট করার ব্যাকআপ লজিক
+            $phone = !empty($contact_info['phone']) ? $contact_info['phone'] : '01634 853 187';
+            $email = !empty($contact_info['email']) ? $contact_info['email'] : 'info@communitycareline.uk';
+            $location = !empty($contact_info['location']) ? $contact_info['location'] : 'First floor office, 74 High street, Rainham, Kent, ME8 7JH';
+
+            // ফোন নাম্বার থেকে স্পেস সরিয়ে লিঙ্ক রেডি করা
+            $phone_link = str_replace(' ', '', $phone);
+            ?>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div
                     class="p-8 rounded-3xl bg-lightBg border border-gray-100 flex flex-col items-center text-center group hover:bg-white hover:shadow-2xl hover:shadow-black/5 transition-all duration-500">
@@ -41,7 +56,9 @@
                         </svg>
                     </div>
                     <h3 class="font-heading text-xl font-bold text-darkText mb-2">Call Us</h3>
-                    <a href="tel:01634853187" class="text-brand font-bold text-lg hover:underline">01634 853 187</a>
+                    <a href="tel:<?php echo $phone_link; ?>" class="text-brand font-bold text-lg hover:underline">
+                        <?php echo htmlspecialchars($phone); ?>
+                    </a>
                 </div>
 
                 <div
@@ -55,8 +72,10 @@
                         </svg>
                     </div>
                     <h3 class="font-heading text-xl font-bold text-darkText mb-2">Email Us</h3>
-                    <a href="mailto:info@communitycareline.uk"
-                        class="text-brand font-bold text-lg hover:underline">info@communitycareline.uk</a>
+                    <a href="mailto:<?php echo htmlspecialchars($email); ?>"
+                        class="text-brand font-bold text-lg hover:underline">
+                        <?php echo htmlspecialchars($email); ?>
+                    </a>
                 </div>
 
                 <div
@@ -73,8 +92,7 @@
                     </div>
                     <h3 class="font-heading text-xl font-bold text-darkText mb-2">Our Office</h3>
                     <p class="text-darkText font-medium text-sm leading-relaxed">
-                        First floor office, 74 High street,<br>
-                        Rainham, Kent, ME8 7JH
+                        <?php echo nl2br(htmlspecialchars($location)); ?>
                     </p>
                 </div>
             </div>
