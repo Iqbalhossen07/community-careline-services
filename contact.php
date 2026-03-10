@@ -1,4 +1,5 @@
 <?php include('head.php') ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <body class="font-body text-gray-600 antialiased bg-white">
     <!-- header section  -->
@@ -110,20 +111,47 @@
                     <h2 class="font-heading text-3xl font-bold text-darkText mb-4">Book an Assessment</h2>
                     <p class="text-gray-500 mb-8">Tell us about your needs and we'll get back to you shortly.</p>
 
-                    <form action="#" class="space-y-5">
+                    <?php
+                    // ১. সার্ভিসগুলো ডাটাবেস থেকে নিয়ে আসা
+                    $form_services_query = "SELECT title FROM services ORDER BY title ASC";
+                    $form_services_result = $mysqli->query($form_services_query);
+                    ?>
+
+                    <form action="app/logics.php" method="POST" class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <input type="text" placeholder="Your Name"
+                            <input type="text" name="name" placeholder="Your Name" required
                                 class="w-full px-5 py-3.5 rounded-xl border border-gray-200 outline-none focus:border-brand transition-all bg-lightBg/30">
-                            <input type="tel" placeholder="Phone Number"
+
+                            <input type="tel" name="phone" placeholder="Phone Number" required
                                 class="w-full px-5 py-3.5 rounded-xl border border-gray-200 outline-none focus:border-brand transition-all bg-lightBg/30">
                         </div>
-                        <input type="email" placeholder="Email Address"
-                            class="w-full px-5 py-3.5 rounded-xl border border-gray-200 outline-none focus:border-brand transition-all bg-lightBg/30">
-                        <textarea rows="4" placeholder="How can we help you?"
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="email" name="email" placeholder="Email Address" required
+                                class="w-full px-5 py-3.5 rounded-xl border border-gray-200 outline-none focus:border-brand transition-all bg-lightBg/30">
+
+                            <select name="service" required
+                                class="w-full px-5 py-3.5 rounded-xl border border-gray-200 outline-none focus:border-brand transition-all bg-lightBg/30 text-gray-500 appearance-none cursor-pointer">
+                                <option value="" disabled selected>Select Service</option>
+                                <?php while ($row = $form_services_result->fetch_assoc()): ?>
+                                <option value="<?php echo htmlspecialchars($row['title']); ?>">
+                                    <?php echo htmlspecialchars($row['title']); ?>
+                                </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+
+                        <textarea name="message" rows="4" placeholder="How can we help you?" required
                             class="w-full px-5 py-3.5 rounded-xl border border-gray-200 outline-none focus:border-brand transition-all bg-lightBg/30"></textarea>
 
-                        <button type="submit"
-                            class="w-full py-2 md:py-3 bg-brand text-white font-bold rounded-xl shadow-[0_15px_30px_-5px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <div class="mb-6">
+                            <div class="g-recaptcha" data-sitekey="6Lfvh4UsAAAAACm42iCtE0w_JvhRQyoEwn0B5aD0"
+                                data-callback="enableSubmitButton" data-expired-callback="disableSubmitButton">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="final_submit_contact_btn" disabled name="send_message"
+                            class="w-full py-3 bg-brand text-white font-bold rounded-xl shadow-[0_15px_30px_-5px_rgba(0,0,0,0.25)] transition-all duration-300 flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
                             Send Message
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -175,7 +203,37 @@
     <!-- footer section -->
     <?php include('footer.php') ?>
 
+    <script>
+    const submitBtn = document.getElementById('final_submit_contact_btn');
 
+    function enableSubmitButton() {
+        submitBtn.disabled = false;
+
+        // ১. ডিসাবলড স্টাইল রিমুভ (অস্পষ্টতা এবং কার্সার ঠিক করা)
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+        // ২. আপনার প্রিমিয়াম অ্যানিমেশন এবং হোভার ইফেক্ট যুক্ত করা
+        submitBtn.classList.add(
+            'hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)]',
+            'hover:-translate-y-1',
+            'active:scale-95'
+        );
+    }
+
+    function disableSubmitButton() {
+        submitBtn.disabled = true;
+
+        // ১. ডিসাবলড স্টাইল আবার দেওয়া
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+        // ২. হোভার ইফেক্টগুলো সরিয়ে নেওয়া
+        submitBtn.classList.remove(
+            'hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.35)]',
+            'hover:-translate-y-1',
+            'active:scale-95'
+        );
+    }
+    </script>
     <!-- js section -->
     <script src="main.js"></script>
 

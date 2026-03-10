@@ -1549,7 +1549,7 @@ if (isset($_POST['update_profile'])) {
 
 
 if (isset($_POST['send_message'])) {
-    $recaptcha_secret = "6LcP7zAsAAAAACJeYOtiyANtKb9ET7a06dfqInDm"; // আপনার SECRET KEY
+    $recaptcha_secret = "6Lfvh4UsAAAAAFUwN7iG2W9b4naWsmM-O7x4hWX3"; // আপনার SECRET KEY
     $recaptcha_response = $_POST['g-recaptcha-response'];
 
     $verify = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptcha_secret}&response={$recaptcha_response}");
@@ -1568,22 +1568,24 @@ if (isset($_POST['send_message'])) {
     $message = htmlspecialchars($_POST['message']);
 
     // Admin Email
-    $admin_email = 'Carelineofficial@gmail.com';
+    $admin_email = 'communitycareline01@gmail.com';
 
     // ** New: Reference ID Generation **
     $ref_id = "#VYD-" . date("ymd") . "-" . rand(100, 999);
     $current_year = date("Y");
 
     // ** Branding Colors **
-    $primaryColor = "#6FCFE8";
+    $primaryColor = "#538d00";
     $darkColor    = "#111827";
     $lightBg      = "#f3f4f6";
 
     // ** Updated Fonts **
-    $fontHeading  = "'Archivo Black', sans-serif";
-    $fontBody     = "'Space Grotesk', sans-serif";
-    $fontNav      = "'Montserrat', sans-serif";
-    $fontImport   = '<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">';
+    $fontHeading  = "'PT Serif', serif";
+    $fontBody     = "'PT Serif', serif";
+    $fontNav      = "'PT Serif', serif";
+    $fontImport   = ' <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">';
 
     // --- Database Insert ---
     $query = "INSERT INTO messages (name, email, phone, service, message) VALUES (?, ?, ?, ?, ?)";
@@ -1591,7 +1593,7 @@ if (isset($_POST['send_message'])) {
 
     if (!$stmt) {
         $_SESSION['message_sent'] = "Error: Database preparation failed.";
-        header('location:../thank-you.php');
+        header('location:../success.php');
         exit();
     }
 
@@ -1610,8 +1612,8 @@ if (isset($_POST['send_message'])) {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'Carelineofficial@gmail.com';
-        $mail->Password   = 'ryyjmcoeqbvzydqu';
+        $mail->Username   = 'communitycareline01@gmail.com';
+        $mail->Password   = 'mvxmibrwnqbtcdfp';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port       = 465;
         $mail->CharSet    = 'UTF-8';
@@ -1619,51 +1621,59 @@ if (isset($_POST['send_message'])) {
         // **********************************************************
         // A. ইউজার কনফার্মেশন ইমেল
         // **********************************************************
-        $mail->setFrom('Carelineofficial@gmail.com', 'Careline Studio');
+        $mail->setFrom('communitycareline01@gmail.com', 'Careline Studio');
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
         $mail->Subject = "We received your inquiry regarding {$service} [{$ref_id}]";
 
         $userBody = "
-            <html>
-            <head>{$fontImport}</head>
-            <body style=\"background-color: {$lightBg}; padding: 40px 0; margin: 0;\">
-                <div style=\"max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);\">
-                    
-                    <div style=\"background-color: {$primaryColor}; padding: 30px; text-align: center;\">
-                        <h1 style=\"margin: 0; color: #ffffff; font-family: {$fontHeading}; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;\">Careline Studio</h1>
-                    </div>
+    <html>
+    <head>{$fontImport}</head>
+    <body style=\"background-color: #f8fafc; padding: 40px 0; margin: 0;\">
+        <div style=\"max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;\">
+            
+            <div style=\"background-color: {$primaryColor}; padding: 40px 30px; text-align: center;\">
+                <h1 style=\"margin: 0; color: #ffffff; font-family: {$fontHeading}; font-size: 26px; letter-spacing: 1px; font-weight: bold;\">Community Careline</h1>
+                <p style=\"margin: 10px 0 0 0; color: rgba(255,255,255,0.8); font-size: 14px; font-family: {$fontBody};\">Compassionate Care at Home</p>
+            </div>
 
-                    <div style=\"padding: 40px; font-family: {$fontBody};\">
-                        <h2 style=\"color: {$darkColor}; font-family: {$fontHeading}; margin-top: 0; font-size: 20px; text-transform: uppercase;\">Hello " . ($name) . ",</h2>
-                        
-                        <p style=\"color: #555; line-height: 1.8; font-size: 15px;\">
-                            Thank you for reaching out to us. We confirm that your inquiry regarding <strong>" . ($service) . "</strong> has been received by our architectural team.
-                        </p>
+            <div style=\"padding: 40px; font-family: {$fontBody}; color: #334155;\">
+                <h2 style=\"color: {$darkColor}; font-family: {$fontHeading}; margin-top: 0; font-size: 22px;\">Dear " . htmlspecialchars($name) . ",</h2>
+                
+                <p style=\"line-height: 1.8; font-size: 16px;\">
+                    Thank you for reaching out to <strong>Community Careline Services</strong>. We have successfully received your inquiry regarding our <span style=\"color: {$primaryColor}; font-weight: bold;\">" . htmlspecialchars($service) . "</span>.
+                </p>
 
-                        <p style=\"color: #555; line-height: 1.8; font-size: 15px;\">
-                            We are currently reviewing your project details and aim to provide a preliminary response within 24 hours.
-                        </p>
-                        
-                        <div style=\"background-color: #ecfeff; border-left: 4px solid {$primaryColor}; padding: 15px 20px; margin: 30px 0; border-radius: 4px;\">
-                            <p style=\"margin: 0; color: #0e7490; font-family: {$fontNav}; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;\">Reference ID</p>
-                            <p style=\"margin: 5px 0 0 0; color: #155e75; font-size: 20px; font-family: monospace; letter-spacing: 1px;\">{$ref_id}</p>
-                            <p style=\"margin: 5px 0 0 0; font-size: 12px; color: #666;\">Please quote this ID in future correspondence.</p>
-                        </div>
-
-                        <hr style=\"border: none; border-top: 1px solid #eee; margin: 30px 0;\">
-                        
-                        <p style=\"margin-bottom: 5px; color: #555; font-size: 14px;\">Best regards,</p>
-                        <p style=\"margin-top: 0; font-family: {$fontNav}; font-weight: bold; color: {$darkColor}; text-transform: uppercase; font-size: 13px;\">The Careline Team</p>
-                    </div>
-
-                    <div style=\"background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eee;\">
-                        <p style=\"margin: 0; font-family: {$fontBody}; font-size: 11px; color: #9ca3af;\">© {$current_year} Careline Studio. All rights reserved.</p>
-                    </div>
+                <p style=\"line-height: 1.8; font-size: 16px;\">
+                    We understand how important quality care is for you and your loved ones. Our care coordination team is currently reviewing your details to ensure we provide the most suitable support plan.
+                </p>
+                
+                <div style=\"background-color: #f0fdf4; border-left: 4px solid {$primaryColor}; padding: 20px; margin: 30px 0; border-radius: 8px;\">
+                    <p style=\"margin: 0; color: #166534; font-family: {$fontNav}; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;\">Assessment Reference</p>
+                    <p style=\"margin: 5px 0 0 0; color: {$darkColor}; font-size: 22px; font-family: monospace; font-weight: bold;\">{$ref_id}</p>
+                    <p style=\"margin: 8px 0 0 0; font-size: 13px; color: #64748b;\">Please keep this ID for any future communication regarding your request.</p>
                 </div>
-            </body>
-            </html>
-        ";
+
+                <p style=\"line-height: 1.8; font-size: 16px;\">
+                    One of our care managers will contact you within <span style=\"font-weight: bold;\">24 hours</span> to discuss the next steps or to arrange a friendly home assessment.
+                </p>
+
+                <hr style=\"border: none; border-top: 1px solid #f1f5f9; margin: 30px 0;\">
+                
+                <p style=\"margin-bottom: 5px; color: #64748b; font-size: 14px;\">Warm regards,</p>
+                <p style=\"margin-top: 0; font-family: {$fontHeading}; font-weight: bold; color: {$darkColor}; font-size: 16px;\">The Careline Team</p>
+            </div>
+
+            <div style=\"background-color: #f8fafc; padding: 25px; text-align: center; border-top: 1px solid #f1f5f9;\">
+                <p style=\"margin: 0; font-family: {$fontBody}; font-size: 12px; color: #94a3b8;\">
+                    If this is an urgent matter, please call our 24/7 support line.<br>
+                    © " . date('Y') . " Community Careline Services (Bexley) Ltd.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+";
 
         $mail->Body = $userBody;
         $mail->send();
@@ -1676,52 +1686,63 @@ if (isset($_POST['send_message'])) {
         $mail->Subject = "New Lead: " . ($service) . " from " . ($name);
 
         $adminBody = "
-            <html>
-            <head>{$fontImport}</head>
-            <body style=\"background-color: {$lightBg}; padding: 40px 0; margin: 0;\">
-                <div style=\"max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;\">
-                    
-                    <div style=\"background-color: {$darkColor}; padding: 20px 30px; text-align: left;\">
-                        <h2 style=\"margin: 0; color: #ffffff; font-family: {$fontHeading}; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;\">New Inquiry Received</h2>
-                    </div>
+    <html>
+    <head>{$fontImport}</head>
+    <body style=\"background-color: #f1f5f9; padding: 40px 0; margin: 0;\">
+        <div style=\"max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;\">
+            
+            <div style=\"background-color: {$darkColor}; padding: 25px 30px; text-align: center;\">
+                <h2 style=\"margin: 0; color: #ffffff; font-family: {$fontHeading}; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;\">
+                    New Care Inquiry
+                </h2>
+            </div>
 
-                    <div style=\"padding: 30px; font-family: {$fontBody};\">
-                        <p style=\"color: #555; font-size: 14px; margin-bottom: 20px;\">
-                            A new contact form submission has been recorded.
-                        </p>
+            <div style=\"padding: 35px; font-family: {$fontBody};\">
+                <p style=\"color: #64748b; font-size: 15px; margin-bottom: 25px;\">
+                    Hello Admin, a new service request has been submitted through the <strong>Community Careline</strong> website.
+                </p>
 
-                        <table style=\"width: 100%; border-collapse: collapse; margin-bottom: 20px;\">
-                            <tr>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: #888; width: 35%; font-size: 13px; font-family: {$fontNav}; text-transform: uppercase;\">Reference ID</td>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: #333; font-weight: bold; font-family: monospace; font-size: 14px;\">{$ref_id}</td>
-                            </tr>
-                            <tr>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: #888; font-size: 13px; font-family: {$fontNav}; text-transform: uppercase;\">Client Name</td>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: #333; font-weight: bold;\">" . ($name) . "</td>
-                            </tr>
-                            <tr>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: #888; font-size: 13px; font-family: {$fontNav}; text-transform: uppercase;\">Email</td>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: {$primaryColor}; font-weight: bold;\">" . ($email) . "</td>
-                            </tr>
-                            <tr>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: #888; font-size: 13px; font-family: {$fontNav}; text-transform: uppercase;\">Service</td>
-                                <td style=\"padding: 10px; border-bottom: 1px solid #eee; color: #333;\">" . ($service) . "</td>
-                            </tr>
-                        </table>
+                <table style=\"width: 100%; border-collapse: collapse; margin-bottom: 25px; background-color: #f8fafc; border-radius: 8px; overflow: hidden;\">
+                    <tr>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: #94a3b8; width: 35%; font-size: 12px; font-family: {$fontNav}; text-transform: uppercase; font-weight: bold;\">Reference ID</td>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: {$primaryColor}; font-weight: bold; font-family: monospace; font-size: 16px;\">{$ref_id}</td>
+                    </tr>
+                    <tr>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: #94a3b8; font-size: 12px; font-family: {$fontNav}; text-transform: uppercase; font-weight: bold;\">Client Name</td>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: #1e293b; font-weight: bold; font-size: 15px;\">" . htmlspecialchars($name) . "</td>
+                    </tr>
+                    <tr>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: #94a3b8; font-size: 12px; font-family: {$fontNav}; text-transform: uppercase; font-weight: bold;\">Phone</td>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: #1e293b; font-weight: bold;\">" . htmlspecialchars($phone) . "</td>
+                    </tr>
+                    <tr>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: #94a3b8; font-size: 12px; font-family: {$fontNav}; text-transform: uppercase; font-weight: bold;\">Service Needed</td>
+                        <td style=\"padding: 15px; border-bottom: 1px solid #edf2f7; color: #1e293b; font-weight: bold;\">" . htmlspecialchars($service) . "</td>
+                    </tr>
+                </table>
 
-                        <div style=\"background-color: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #eee;\">
-                            <p style=\"margin: 0 0 5px 0; font-family: {$fontNav}; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight:bold;\">Message Content</p>
-                            <p style=\"margin: 0; color: #333; line-height: 1.6; font-size: 14px;\">" . nl2br(($message)) . "</p>
-                        </div>
-
-                        <div style=\"margin-top: 25px; text-align: center;\">
-                            <a href=\"mailto:{$email}\" style=\"background-color: {$primaryColor}; color: #000; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-family: {$fontNav}; font-weight: bold; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;\">Reply to Client</a>
-                        </div>
-                    </div>
+                <div style=\"background-color: #ffffff; padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1;\">
+                    <p style=\"margin: 0 0 10px 0; font-family: {$fontNav}; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight:bold;\">Additional Information</p>
+                    <p style=\"margin: 0; color: #334155; line-height: 1.6; font-size: 14px; font-style: italic;\">\"" . nl2br(htmlspecialchars($message)) . "\"</p>
                 </div>
-            </body>
-            </html>
-        ";
+
+                <div style=\"margin-top: 35px; text-align: center;\">
+                    <a href=\"mailto:" . htmlspecialchars($email) . "?subject=Re: Care Inquiry - {$ref_id}\" 
+                       style=\"background-color: {$primaryColor}; color: #ffffff; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-family: {$fontNav}; font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1);\">
+                       Reply to Client
+                    </a>
+                </div>
+            </div>
+
+            <div style=\"background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #edf2f7;\">
+                <p style=\"margin: 0; font-family: {$fontBody}; font-size: 11px; color: #94a3b8;\">
+                    This is an automated notification from the Community Careline Website Portal.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+";
 
         $mail->Body = $adminBody;
         $mail->send();
@@ -1737,7 +1758,7 @@ if (isset($_POST['send_message'])) {
         $_SESSION['message_sent'] = "Error: Something went wrong. Please try again later.";
     }
 
-    header("location:../thank-you.php");
+    header("location:../success.php");
     exit();
 }
 // --- Bulk Delete Logic ---
