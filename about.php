@@ -26,12 +26,22 @@
 
     <section class="py-24 bg-white overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <?php
+            // ১. ডাটাবেস থেকে About Content ফেচ করা
+            $about_page_query = "SELECT content, image FROM about_content WHERE id = 1 LIMIT 1";
+            $about_page_result = $mysqli->query($about_page_query);
+            $about_page_data = $about_page_result->fetch_assoc();
+
+            // ইমেজ পাথ সেট করা
+            $about_img_name = !empty($about_page_data['image']) ? $about_page_data['image'] : 'default-about.jpg';
+            $about_img_path = 'app/uploads/about_images/' . $about_img_name;
+            ?>
+
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <div class="relative group">
                     <div
                         class="relative rounded-[2.5rem] overflow-hidden border-8 border-white shadow-[0_25px_60px_-15px_rgba(0,0,0,0.2)] z-10">
-                        <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1000&q=80"
-                            alt="Caregiving"
+                        <img src="<?php echo $about_img_path; ?>" alt="Community Careline Services"
                             class="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105">
                     </div>
                     <div class="absolute -bottom-6 -left-6 w-40 h-40 bg-brand/10 rounded-full blur-3xl -z-0"></div>
@@ -39,9 +49,8 @@
 
                 <div class="space-y-8">
                     <div>
-
                         <h1
-                            class="font-heading text-2xl  md:text-4xl  font-bold text-darkText mb-4 md:mb-6 tracking-[-0.03em]">
+                            class="font-heading text-2xl md:text-4xl font-bold text-darkText mb-4 md:mb-6 tracking-[-0.03em]">
                             About Community
                             <span class="text-brand relative "> Careline Services
                                 <svg class="absolute -bottom-1.5 left-0 w-full h-1.5 md:h-2 text-brand/30"
@@ -52,22 +61,14 @@
                             </span>
                             (Bexley) Ltd
                         </h1>
-                        <p class="text-lg leading-relaxed text-gray-600 mb-6">
 
-
-                            Community Careline Services (Bexley) Ltd was founded in 1994 on the belief that in today’s
-                            constantly changing world, more and more people need assistance at home. Whether it’s
-                            medication support, assistance with personal care, domestic support or shopping, we want to
-                            be the ones to offer relief and support.
-                        </p>
-                        <p class="text-lg leading-relaxed text-gray-600">
-                            At Community Careline Services (Bexley) Ltd, we work hard to offer personalised home
-                            services with convenience and transparency. We understand the difficulty of the demands of
-                            daily life, that’s why we’re committed to making the process affordable, convenient and
-                            tailored to you.
-                        </p>
+                        <div class="text-lg leading-relaxed text-gray-600 space-y-6 font-body">
+                            <?php
+                            // ডাটাবেস থেকে আসা কন্টেন্ট সরাসরি ইকো করা হচ্ছে
+                            echo $about_page_data['content'];
+                            ?>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -188,28 +189,28 @@
 
                 foreach ($faqs as $index => $faq):
                 ?>
-                    <div
-                        class="faq-item border border-gray-100 rounded-2xl bg-lightBg overflow-hidden transition-all duration-300">
-                        <button class="faq-btn w-full px-6 py-5 flex items-center justify-between text-left group">
-                            <span
-                                class="font-heading font-bold text-darkText text-sm md:text-base pr-4 group-hover:text-brand transition-colors uppercase tracking-tight">
-                                <?php echo $faq['q']; ?>
-                            </span>
-                            <span
-                                class="faq-icon w-8 h-8 rounded-full bg-white flex items-center justify-center text-brand shadow-sm transition-transform duration-300">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </span>
-                        </button>
-                        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-white">
-                            <div
-                                class="px-6 py-5 text-gray-500 text-sm md:text-base leading-relaxed border-t border-gray-50">
-                                <?php echo $faq['a']; ?>
-                            </div>
+                <div
+                    class="faq-item border border-gray-100 rounded-2xl bg-lightBg overflow-hidden transition-all duration-300">
+                    <button class="faq-btn w-full px-6 py-5 flex items-center justify-between text-left group">
+                        <span
+                            class="font-heading font-bold text-darkText text-sm md:text-base pr-4 group-hover:text-brand transition-colors uppercase tracking-tight">
+                            <?php echo $faq['q']; ?>
+                        </span>
+                        <span
+                            class="faq-icon w-8 h-8 rounded-full bg-white flex items-center justify-center text-brand shadow-sm transition-transform duration-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-white">
+                        <div
+                            class="px-6 py-5 text-gray-500 text-sm md:text-base leading-relaxed border-t border-gray-50">
+                            <?php echo $faq['a']; ?>
                         </div>
                     </div>
+                </div>
                 <?php endforeach; ?>
 
             </div>
