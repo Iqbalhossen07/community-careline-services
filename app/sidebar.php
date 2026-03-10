@@ -137,7 +137,7 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                 <a href="careers.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
                 <?php echo ($active_page == 'careers.php') ? 'border-l-4 border-primary-end bg-sky-100 text-primary-end font-semibold' : 'text-gray-700 hover:bg-gray-100'; ?>
                 ">
-                    <i class="fa-solid fa-hand-holding-heart w-5 h-5 mr-3"></i>
+                    <i class="fa-solid fa-briefcase w-5 h-5 mr-3"></i>
                     <span>Careers</span>
                 </a>
             </li>
@@ -145,7 +145,7 @@ $is_about_active = ($active_page == 'home-about-content.php' || $active_page == 
                 <a href="testimonials.php" class="font-nav flex items-center p-3 rounded-lg transition-colors
                 <?php echo ($active_page == 'testimonials.php') ? 'border-l-4 border-primary-end bg-sky-100 text-primary-end font-semibold' : 'text-gray-700 hover:bg-gray-100'; ?>
                 ">
-                    <i class="fa-solid fa-hand-holding-heart w-5 h-5 mr-3"></i>
+                    <i class="fa-solid fa-comment-dots w-5 h-5 mr-3"></i>
                     <span>Testimonials</span>
                 </a>
             </li>

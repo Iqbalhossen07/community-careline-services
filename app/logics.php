@@ -1194,30 +1194,107 @@ if (isset($_GET['member_delete_id'])) {
 // -----------------------Home About Content Logic (UPDATE ONLY) ---------------------
 
 if (isset($_POST['update_home_about_content'])) {
-    // 1. Get Inputs (Title and Content only)
+    // 1. ইনপুট ডাটা নেওয়া
     $title = $_POST['title'];
     $content = $_POST['content'];
+    $old_images_from_form = $_POST['old_images']; // ইউজার যেসব পুরানো ছবি রাখতে চেয়েছে
 
-    // --- Image Logic Removed ---
-    // ইমেজ আপলোড কোড, ফাইল মুভ এবং আনলিংক লজিক সব ডিলিট করা হয়েছে।
+    // --- ধাপ ১: ফোল্ডার ক্লিনআপ লজিক (নতুন কোড) ---
+    // আপডেট করার আগে আমরা চেক করব কোন ছবিগুলো ইউজার ডিলিট করে দিয়েছে
 
-    // 2. Update Query (Removed image column)
+    // ১.১ ডাটাবেস থেকে বর্তমান ছবিগুলো আনুন
+    $stmt_fetch = $mysqli->prepare("SELECT image FROM home_about_content WHERE id = 1");
+    $stmt_fetch->execute();
+    $result_fetch = $stmt_fetch->get_result();
+    $row_fetch = $result_fetch->fetch_assoc();
+    $stmt_fetch->close();
+
+    $db_existing_images = [];
+    if ($row_fetch && !empty($row_fetch['image'])) {
+        $db_existing_images = explode(',', $row_fetch['image']);
+    }
+
+    // ১.২ ফর্ম থেকে আসা 'রাখার মতো' ছবিগুলো অ্যারেতে নিই
+    $kept_images = [];
+    if (!empty($old_images_from_form)) {
+        // স্ট্রিং ভেঙে অ্যারে তৈরি, খালি ভ্যালু ফিল্টার করা
+        $kept_images = array_filter(explode(',', $old_images_from_form));
+    }
+
+    // ১.৩ তুলনা করুন: ডাটাবেসে ছিল কিন্তু ফর্মে নেই -> মানে ডিলিট করতে হবে
+    // array_diff(A, B) মানে A তে আছে কিন্তু B তে নেই
+    $images_to_delete = array_diff($db_existing_images, $kept_images);
+
+    // ১.৪ ফোল্ডার থেকে ছবিগুলো ডিলিট করা
+    foreach ($images_to_delete as $img_del) {
+        $file_path = 'uploads/home_about_images/' . trim($img_del);
+        if (file_exists($file_path)) {
+            unlink($file_path); // ফোল্ডার থেকে ফাইল ডিলিট
+        }
+    }
+
+
+    // --- ধাপ ২: নতুন ছবি প্রসেসিং এবং ফাইনাল লিস্ট তৈরি ---
+
+    // শুরুতে ফাইনাল লিস্টে সেই ছবিগুলোই থাকবে যা ইউজার রাখতে চেয়েছে
+    $final_images_array = $kept_images;
+
+    // চেক করা হচ্ছে নতুন কোনো ছবি আপলোড করা হয়েছে কিনা
+    if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+
+        $total_files = count($_FILES['images']['name']); // মোট কতগুলো ফাইল
+        $new_image_filenames = [];
+
+        // ছবিগুলো আপলোড করার লুপ
+        for ($i = 0; $i < $total_files; $i++) {
+            $image_name = $_FILES['images']['name'][$i];
+            $tmpName    = $_FILES['images']['tmp_name'][$i];
+
+            // ১. একটি নতুন ইউনিক নাম তৈরি করা
+            $image_ext = pathinfo($image_name, PATHINFO_EXTENSION);
+            // লুপের মধ্যে ইউনিক নাম নিশ্চিত করতে $i যুক্ত করা হলো
+            $unique_image_name = time() . '_' . $i . '_about_' . rand(1000, 9999) . '.' . $image_ext;
+
+            // ২. 'uploads/about_images/' ফোল্ডার
+            $folder = 'uploads/home_about_images/' . $unique_image_name;
+
+            // ৩. ফাইল আপলোড করা
+            if (move_uploaded_file($tmpName, $folder)) {
+                // সফল হলে অ্যারেতে নাম যোগ করা
+                $new_image_filenames[] = $unique_image_name;
+            }
+        }
+
+        // নতুন ছবিগুলো ফাইনাল অ্যারের সাথে যুক্ত করা
+        if (!empty($new_image_filenames)) {
+            $final_images_array = array_merge($final_images_array, $new_image_filenames);
+        }
+    }
+
+    // ৪. অ্যারে থেকে স্ট্রিং এ কনভার্ট করা (Comma Separated)
+    // উদাহরণ: "123_about.jpg,124_about.jpg"
+    $final_image_string = implode(',', $final_images_array);
+
+
+    // --- ধাপ ৩: ডাটাবেস আপডেট ---
+    // image কলামটি আপডেট কুয়েরিতে যুক্ত করা হয়েছে
     $query = "UPDATE `home_about_content` SET 
                 `title`=?, 
-                `content`=? 
+                `content`=?,
+                `image`=? 
               WHERE `id` = 1";
 
     $stmt = $mysqli->prepare($query);
 
     if ($stmt) {
-        // Bind parameters: ss -> title, content
-        $stmt->bind_param("ss", $title, $content);
+        // Bind parameters: sss -> title, content, image
+        $stmt->bind_param("sss", $title, $content, $final_image_string);
 
         if ($stmt->execute()) {
             $_SESSION['message'] = "Home About Content updated successfully!";
             $_SESSION['message_type'] = 'success';
         } else {
-            $_SESSION['message'] = "Failed to update content.";
+            $_SESSION['message'] = "Failed to update content: " . $stmt->error;
             $_SESSION['message_type'] = 'error';
         }
         $stmt->close();
@@ -1226,6 +1303,7 @@ if (isset($_POST['update_home_about_content'])) {
         $_SESSION['message_type'] = 'error';
     }
 
+    // কাজ শেষে home-about-content.php পেজে রিডাইরেক্ট করা
     header('location:home-about-content.php');
     exit();
 }
