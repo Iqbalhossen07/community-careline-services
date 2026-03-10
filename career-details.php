@@ -41,10 +41,11 @@ if (!$career) {
                     <li class="text-gray-600">/</li>
                     <li><a href="careers.php" class="text-gray-400 hover:text-brand transition-colors">Careers</a></li>
                     <li class="text-gray-600">/</li>
-                    <li class="text-brand font-bold uppercase tracking-widest text-[11px] md:text-sm">Care Worker</li>
+                    <li class="text-brand font-bold uppercase tracking-widest text-[11px] md:text-sm">Care Details</li>
                 </ol>
             </nav>
-            <h1 class="font-heading text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight">Care Worker</h1>
+            <h1 class="font-heading text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight">
+                <?php echo $career['c_title']; ?></h1>
             <p class="text-gray-300 text-lg max-w-2xl">Start a rewarding career making a real difference in people's
                 lives every day.</p>
         </div>

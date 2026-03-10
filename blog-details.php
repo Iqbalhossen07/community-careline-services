@@ -1,4 +1,30 @@
-<?php include('head.php') ?>
+<?php include('head.php');
+// ১. ইউআরএল থেকে আইডি চেক করা
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    header('Location: blogs.php'); // আইডি না থাকলে মেইন ব্লগ পেইজে পাঠিয়ে দিবে
+    exit();
+}
+
+$id = intval($_GET['id']);
+
+// ২. ডাটাবেস থেকে ওই নির্দিষ্ট ব্লগের ডাটা আনা
+$stmt = $mysqli->prepare("SELECT * FROM blogs WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$blog = $result->fetch_assoc();
+
+// যদি ডাটা না পাওয়া যায়
+if (!$blog) {
+    header('Location: blogs.php');
+    exit();
+}
+
+// ইমেজ পাথ হ্যান্ডেল করা
+$blog_images = !empty($blog['image']) ? explode(',', $blog['image']) : [];
+$display_image = !empty($blog_images) ? trim($blog_images[0]) : '';
+$formatted_date = date('M d, Y', strtotime($blog['created_at']));
+?>
 
 <body class="font-body text-gray-600 antialiased bg-white">
     <!-- header section  -->
@@ -19,13 +45,13 @@
                     <li class="text-gray-600">/</li>
                     <li><a href="blogs.php" class="text-gray-400 hover:text-brand transition-colors">Blogs</a></li>
                     <li class="text-gray-600">/</li>
-                    <li class="text-brand font-bold uppercase tracking-widest text-[11px] md:text-sm">Mental Wellbeing
+                    <li class="text-brand font-bold uppercase tracking-widest text-[11px] md:text-sm">Blog Details
                     </li>
                 </ol>
             </nav>
             <h1
                 class="font-heading text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight max-w-4xl leading-tight">
-                How to Maintain Mental Wellbeing in Old Age
+                <?php echo htmlspecialchars($blog['name']); ?>
             </h1>
             <p class="text-gray-300 text-lg max-w-2xl">Read our latest articles about health, home care, and wellbeing.
             </p>
@@ -40,15 +66,22 @@
                 <div class="lg:col-span-8">
                     <div
                         class="relative rounded-[2.5rem] overflow-hidden mb-12 shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-8 border-white ring-1 ring-black/5">
-                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80"
-                            alt="Mental Wellbeing" class="w-full h-[450px] object-cover">
+                        <?php if (!empty($display_image)): ?>
+                        <img src="app/uploads/blog_images/<?php echo htmlspecialchars($display_image); ?>"
+                            alt="<?php echo htmlspecialchars($blog['name']); ?>" class="w-full h-[450px] object-cover">
+                        <?php else: ?>
+                        <div class="w-full h-[450px] bg-gray-200 flex items-center justify-center">
+                            <i class="fa-solid fa-newspaper text-6xl text-gray-300"></i>
+                        </div>
+                        <?php endif; ?>
+
                         <span
-                            class="absolute top-6 left-6 bg-brand text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg">HEALTH
-                            TIPS</span>
+                            class="absolute top-6 left-6 bg-brand text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg uppercase">
+                            <?php echo htmlspecialchars($blog['category']); ?>
+                        </span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-gray-100">
-
                         <div class="text-gray-500 text-sm flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
                                 <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -59,8 +92,9 @@
                                     <line x1="3" y1="10" x2="21" y2="10"></line>
                                 </svg>
                             </div>
-                            <span class="font-medium text-darkText tracking-tight">Feb 28, 2026</span>
+                            <span class="font-medium text-darkText tracking-tight"><?php echo $formatted_date; ?></span>
                         </div>
+
                         <div class="text-gray-500 text-sm flex items-center gap-2">
                             <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
                                 <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -69,39 +103,20 @@
                                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </div>
-                            <span class="font-medium text-darkText">Admin</span>
+                            <span
+                                class="font-medium text-darkText"><?php echo htmlspecialchars($blog['author_name']); ?></span>
                         </div>
                     </div>
 
-                    <div class="prose prose-lg max-w-none text-gray-600 leading-relaxed space-y-6">
-                        <p class="text-xl font-medium text-darkText italic border-l-4 border-brand pl-6">"Mental health
-                            is just as important as physical health, especially for seniors living independently. A
-                            healthy mind lead to a happier life."</p>
+                    <div class="prose prose-lg max-w-none text-gray-600 leading-relaxed font-body">
+                        <h1 class="text-3xl md:text-4xl font-bold text-darkText mb-6 font-heading">
+                            <?php echo htmlspecialchars($blog['name']); ?>
+                        </h1>
 
-                        <p>Maintaining mental wellbeing in later years is crucial for a high quality of life. As we age,
-                            life transitions such as retirement, health changes, or losing loved ones can impact our
-                            mental state. However, aging also brings wisdom and the opportunity for new experiences.</p>
-
-                        <h3 class="text-2xl font-bold text-darkText mt-10">1. Stay Socially Active</h3>
-                        <p>Isolation is one of the biggest risks to senior mental health. Regularly engaging with
-                            friends, family, or community groups can reduce feelings of loneliness and boost mood.</p>
-
-                        <h3 class="text-2xl font-bold text-darkText mt-10">2. Keep Your Mind Engaged</h3>
-                        <p>Just like a muscle, the brain needs exercise. Reading, puzzles, learning a new hobby, or even
-                            using technology to stay connected helps keep neural pathways active.</p>
-
-                        <div class="bg-lightBg p-8 rounded-3xl border border-gray-100 my-10">
-                            <h4 class="font-bold text-darkText mb-4">Did You Know?</h4>
-                            <p class="text-sm italic">According to health research, regular social interaction can
-                                reduce the risk of cognitive decline by over 20% in seniors.</p>
+                        <div class="blog-content-area space-y-6">
+                            <?php echo $blog['description']; ?>
                         </div>
-
-                        <p>At <span class="text-brand font-bold uppercase">Careline</span>, we don't just provide
-                            physical care; our companions are trained to offer mental and emotional support to ensure
-                            our clients feel valued and heard every single day.</p>
                     </div>
-
-
                 </div>
 
                 <div class="lg:col-span-4 space-y-12">
@@ -110,71 +125,64 @@
                         <p class="text-sm mb-6 text-gray-500">Need immediate help? Fill out your phone number and we
                             will call you.</p>
                         <form class="space-y-4">
-                            <input type="text" placeholder="Your Name"
-                                class="w-full px-4 py-3 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all">
-                            <input type="tel" placeholder="Phone Number"
-                                class="w-full px-4 py-3 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all">
-                            <button
-                                class="w-full py-3 bg-brand text-white font-bold rounded-md shadow-lg shadow-black/20 hover:bg-brandDark hover:-translate-y-1 transition-all">Submit
-                                Request</button>
+
+
+                            <a href="contact.php"
+                                class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1">
+                                Submit
+                                Request
+                            </a>
                         </form>
                     </div>
 
 
+                    <?php
+                    // ১. বর্তমান ব্লগের আইডি বাদে সবশেষ ৩টি ব্লগ ফেচ করা
+                    // $id ভেরিয়েবলটি আপনার ডিটেইল পেইজে আগে থেকেই ডিফাইন করা আছে
+                    $recent_query = "SELECT id, name, image, created_at FROM blogs WHERE id != $id ORDER BY id DESC LIMIT 3";
+                    $recent_result = $mysqli->query($recent_query);
+                    ?>
+
                     <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-black/5">
                         <h4 class="font-heading text-xl font-bold text-darkText mb-6">Recent Posts</h4>
                         <div class="space-y-6">
-                            <a href="#" class="group flex gap-4">
-                                <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
-                                    <img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&w=150&q=80"
-                                        class="w-full h-full object-cover">
+
+                            <?php if ($recent_result && $recent_result->num_rows > 0): ?>
+                            <?php while ($recent = $recent_result->fetch_assoc()):
+                                    // ইমেজ হ্যান্ডেলিং
+                                    $r_images = explode(',', $recent['image']);
+                                    $r_main_img = trim($r_images[0]);
+                                    $r_date = date('M d, Y', strtotime($recent['created_at']));
+                                ?>
+                            <a href="blog-details.php?id=<?php echo $recent['id']; ?>" class="group flex gap-4">
+                                <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                                    <?php if (!empty($r_main_img)): ?>
+                                    <img src="app/uploads/blog_images/<?php echo htmlspecialchars($r_main_img); ?>"
+                                        alt="<?php echo htmlspecialchars($recent['name']); ?>"
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                    <?php else: ?>
+                                    <div class="w-full h-full flex items-center justify-center text-gray-300">
+                                        <i class="fa-solid fa-image"></i>
+                                    </div>
+                                    <?php endif; ?>
                                 </div>
                                 <div>
                                     <h5
-                                        class="text-sm font-bold text-darkText group-hover:text-brand transition-colors line-clamp-2">
-                                        Top 5 Nutritious Meals for Home Care</h5>
-                                    <p class="text-xs text-gray-400 mt-1">Feb 25, 2026</p>
+                                        class="text-sm font-bold text-darkText group-hover:text-brand transition-colors line-clamp-2 leading-snug">
+                                        <?php echo htmlspecialchars($recent['name']); ?>
+                                    </h5>
+                                    <p class="text-xs text-gray-400 mt-1"><?php echo $r_date; ?></p>
                                 </div>
                             </a>
-                            <a href="#" class="group flex gap-4">
-                                <div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
-                                    <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=150&q=80"
-                                        class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <h5
-                                        class="text-sm font-bold text-darkText group-hover:text-brand transition-colors line-clamp-2">
-                                        Careline Awarded Best Provider 2026</h5>
-                                    <p class="text-xs text-gray-400 mt-1">Feb 20, 2026</p>
-                                </div>
-                            </a>
+                            <?php endwhile; ?>
+                            <?php else: ?>
+                            <p class="text-xs text-gray-400">No other posts available.</p>
+                            <?php endif; ?>
+
                         </div>
                     </div>
 
-                    <div class="bg-brand p-10 rounded-[2.5rem] text-white relative overflow-hidden group">
-                        <div
-                            class="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl transition-all group-hover:scale-110">
-                        </div>
 
-                        <div class="relative z-10 text-center">
-                            <div
-                                class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <h4 class="font-heading text-2xl font-bold mb-3">Need Expert Advice?</h4>
-                            <p class="text-white/80 text-sm mb-8 leading-relaxed">Book a free 15-minute consultation
-                                with our care specialists today.</p>
-
-                            <a href="contact.php"
-                                class="block w-full py-4 bg-white text-brand font-bold rounded-xl shadow-[0_15px_30px_-5px_rgba(0,0,0,0.2)] hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.3)] hover:-translate-y-1 transition-all duration-300 text-center">
-                                Free Consultation
-                            </a>
-                        </div>
-                    </div>
                 </div>
 
             </div>

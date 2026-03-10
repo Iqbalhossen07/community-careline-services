@@ -653,25 +653,51 @@
 
 
 
+            <?php
+            // ১. ডাটাবেস থেকে ব্লগগুলো নিয়ে আসা (সবশেষ ৩টি ব্লগ হোমপেজে দেখানোর জন্য)
+            $blog_result = $mysqli->query("SELECT * FROM blogs ORDER BY id DESC LIMIT 3");
+            $all_blogs = [];
+            if ($blog_result) {
+                $all_blogs = $blog_result->fetch_all(MYSQLI_ASSOC);
+            }
+            ?>
+
             <div class="grid md:grid-cols-3 gap-8">
+                <?php if (!empty($all_blogs)): ?>
+                <?php foreach ($all_blogs as $blog):
+                        // ডেট ফরম্যাট করা (যেমন: Feb 28, 2026)
+                        $formatted_date = date('M d, Y', strtotime($blog['created_at']));
 
+                        // ইমেজের নাম ক্লিন করা (যদি কমা দিয়ে সেভ করা থাকে তবে প্রথমটি নেওয়া)
+                        $blog_images = explode(',', $blog['image']);
+                        $main_image = trim($blog_images[0]);
+                    ?>
                 <article
                     class="bg-white rounded-md border border-gray-100 shadow-md shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 group flex flex-col overflow-hidden transform hover:-translate-y-1">
+
                     <div class="relative h-56 w-full overflow-hidden bg-gray-200">
-                        <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                            alt="Senior safety at home"
+                        <?php if (!empty($main_image)): ?>
+                        <img src="app/uploads/blog_images/<?php echo htmlspecialchars($main_image); ?>"
+                            alt="<?php echo htmlspecialchars($blog['name']); ?>"
                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                            <i class="fa-solid fa-newspaper text-4xl text-gray-300"></i>
+                        </div>
+                        <?php endif; ?>
+
                         <div
                             class="absolute inset-0 bg-gradient-to-t from-darkText/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         </div>
+
                         <div
                             class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-md text-xs font-bold text-darkText uppercase tracking-wider shadow-sm">
-                            Health Tips
+                            <?php echo htmlspecialchars($blog['category']); ?>
                         </div>
                     </div>
-                    <div class="flex-1 flex flex-col p-6 md:p-8">
-                        <div class="flex flex-wrap items-center gap-6 mb-2  ">
 
+                    <div class="flex-1 flex flex-col p-6 md:p-8">
+                        <div class="flex flex-wrap items-center gap-6 mb-4">
                             <div class="text-gray-500 text-sm flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
                                     <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor"
@@ -682,7 +708,8 @@
                                         <line x1="3" y1="10" x2="21" y2="10"></line>
                                     </svg>
                                 </div>
-                                <span class="font-medium text-darkText tracking-tight">Feb 28, 2026</span>
+                                <span
+                                    class="font-medium text-darkText tracking-tight"><?php echo $formatted_date; ?></span>
                             </div>
                             <div class="text-gray-500 text-sm flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
@@ -692,18 +719,21 @@
                                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                     </svg>
                                 </div>
-                                <span class="font-medium text-darkText">Admin</span>
+                                <span
+                                    class="font-medium text-darkText"><?php echo htmlspecialchars($blog['author_name']); ?></span>
                             </div>
                         </div>
+
                         <h3
                             class="font-heading text-xl font-bold text-darkText mb-3 group-hover:text-brand transition-colors line-clamp-2">
-                            How to Create a Safe Home Environment for Seniors
+                            <?php echo htmlspecialchars($blog['name']); ?>
                         </h3>
-                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1">
-                            Simple modifications can make a massive difference in preventing falls and ensuring your
-                            loved ones remain safe while living independently.
+
+                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1 font-body">
+                            <?php echo strip_tags($blog['description']); ?>
                         </p>
-                        <a href="blog-details.php"
+
+                        <a href="blog-details.php?id=<?php echo $blog['id']; ?>"
                             class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1 group/btn">
                             Read Article
                             <span
@@ -711,120 +741,12 @@
                         </a>
                     </div>
                 </article>
-
-                <article
-                    class="bg-white rounded-md border border-gray-100 shadow-md shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 group flex flex-col overflow-hidden transform hover:-translate-y-1">
-                    <div class="relative h-56 w-full overflow-hidden bg-gray-200">
-                        <img src="img/b1.jpg" alt="Mental health and companionship"
-                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-darkText/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        </div>
-                        <div
-                            class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-md text-xs font-bold text-darkText uppercase tracking-wider shadow-sm">
-                            Wellbeing
-                        </div>
-                    </div>
-                    <div class="flex-1 flex flex-col p-6 md:p-8">
-                        <div class="flex flex-wrap items-center gap-6 mb-2  ">
-
-                            <div class="text-gray-500 text-sm flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
-                                </div>
-                                <span class="font-medium text-darkText tracking-tight">Feb 28, 2026</span>
-                            </div>
-                            <div class="text-gray-500 text-sm flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                </div>
-                                <span class="font-medium text-darkText">Admin</span>
-                            </div>
-                        </div>
-                        <h3
-                            class="font-heading text-xl font-bold text-darkText mb-3 group-hover:text-brand transition-colors line-clamp-2">
-                            The Importance of Companionship for Mental Health
-                        </h3>
-                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1">
-                            Loneliness can have severe physical effects. Discover why regular social interaction and
-                            professional companionship are vital for the elderly.
-                        </p>
-                        <a href="blog-details.php"
-                            class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1 group/btn">
-                            Read Article
-                            <span
-                                class="ml-2 transform group-hover/btn:translate-x-1 transition-transform">&rarr;</span>
-                        </a>
-                    </div>
-                </article>
-
-                <article
-                    class="bg-white rounded-md border border-gray-100 shadow-md shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 group flex flex-col overflow-hidden transform hover:-translate-y-1">
-                    <div class="relative h-56 w-full overflow-hidden bg-gray-200">
-                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                            alt="Caregiver training"
-                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-t from-darkText/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        </div>
-                        <div
-                            class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-md text-xs font-bold text-darkText uppercase tracking-wider shadow-sm">
-                            Company News
-                        </div>
-                    </div>
-                    <div class="flex-1 flex flex-col p-6 md:p-8">
-                        <div class="flex flex-wrap items-center gap-6 mb-2  ">
-
-                            <div class="text-gray-500 text-sm flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
-                                </div>
-                                <span class="font-medium text-darkText tracking-tight">Feb 28, 2026</span>
-                            </div>
-                            <div class="text-gray-500 text-sm flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg bg-lightBg flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                </div>
-                                <span class="font-medium text-darkText">Admin</span>
-                            </div>
-                        </div>
-                        <h3
-                            class="font-heading text-xl font-bold text-darkText mb-3 group-hover:text-brand transition-colors line-clamp-2">
-                            How We Maintain a CQC "Outstanding" Rating
-                        </h3>
-                        <p class="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 flex-1">
-                            A behind-the-scenes look at our rigorous recruitment process, continuous training programs,
-                            and dedication to excellence in caregiving.
-                        </p>
-                        <a href="blog-details.php"
-                            class="mt-auto self-start inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-300 transform hover:-translate-y-1 group/btn">
-                            Read Article
-                            <span
-                                class="ml-2 transform group-hover/btn:translate-x-1 transition-transform">&rarr;</span>
-                        </a>
-                    </div>
-                </article>
-
+                <?php endforeach; ?>
+                <?php else: ?>
+                <div class="col-span-full text-center py-10">
+                    <p class="text-gray-400">Stay tuned for our upcoming articles!</p>
+                </div>
+                <?php endif; ?>
             </div>
 
             <div class="mt-16 text-center">
