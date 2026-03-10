@@ -37,14 +37,27 @@
                 <div class="w-20 h-1.5 bg-brand rounded-full"></div>
             </div>
 
+            <?php
+            // ১. ডাটাবেস থেকে সব জব নিয়ে আসা
+            $job_query = "SELECT * FROM careers ORDER BY id DESC";
+            $job_result = $mysqli->query($job_query);
+            $jobs = $job_result->fetch_all(MYSQLI_ASSOC);
+
+            // ২. ফিল্টারের জন্য ইউনিক লোকেশন এবং জব টাইপ বের করা
+            $types = $mysqli->query("SELECT DISTINCT c_job_type FROM careers");
+            $locations = $mysqli->query("SELECT DISTINCT c_location FROM careers");
+            ?>
+
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                     <div class="relative">
                         <select id="filter-type"
                             class="w-full pl-4 pr-10 py-3 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 appearance-none cursor-pointer text-sm font-bold">
                             <option value="all">All Job Types</option>
-                            <option value="full-time">Full-Time</option>
-                            <option value="part-time">Part-Time</option>
+                            <?php while ($t = $types->fetch_assoc()): ?>
+                            <option value="<?php echo strtolower($t['c_job_type']); ?>"><?php echo $t['c_job_type']; ?>
+                            </option>
+                            <?php endwhile; ?>
                         </select>
                         <div
                             class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
@@ -59,9 +72,10 @@
                         <select id="filter-location"
                             class="w-full pl-4 pr-10 py-3 rounded-md border border-gray-200 focus:border-brand focus:ring-4 focus:ring-brand/10 outline-none transition-all bg-white text-gray-700 appearance-none cursor-pointer text-sm font-bold">
                             <option value="all">All Locations</option>
-                            <option value="london">London</option>
-                            <option value="surrey">Surrey</option>
-                            <option value="head office">Head Office</option>
+                            <?php while ($l = $locations->fetch_assoc()): ?>
+                            <option value="<?php echo strtolower($l['c_location']); ?>"><?php echo $l['c_location']; ?>
+                            </option>
+                            <?php endwhile; ?>
                         </select>
                         <div
                             class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
@@ -84,9 +98,12 @@
             </div>
 
             <div id="job-container" class="flex flex-col gap-6">
-
+                <?php if (!empty($jobs)): ?>
+                <?php foreach ($jobs as $job): ?>
                 <div class="job-card group block bg-white rounded-md p-6 md:p-8 border border-gray-100 shadow-md shadow-black/5 transition-all duration-300 transform hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-black/10 relative overflow-hidden"
-                    data-type="full-time part-time" data-location="london">
+                    data-type="<?php echo strtolower($job['c_job_type']); ?>"
+                    data-location="<?php echo strtolower($job['c_location']); ?>">
+
                     <div
                         class="absolute top-0 left-0 w-1.5 h-full bg-brand transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
                     </div>
@@ -95,59 +112,25 @@
                         <div class="flex-1">
                             <div class="flex flex-wrap gap-2 mb-4">
                                 <span
-                                    class="bg-brand/5 text-brand px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-brand/10">Full-Time
-                                    / Part-Time</span>
+                                    class="bg-brand/5 text-brand px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-brand/10">
+                                    <?php echo htmlspecialchars($job['c_job_type']); ?>
+                                </span>
                                 <span
-                                    class="bg-gray-100 text-darkText px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200">London,
-                                    UK</span>
+                                    class="bg-gray-100 text-darkText px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200">
+                                    <?php echo htmlspecialchars($job['c_location']); ?>
+                                </span>
                             </div>
                             <h3
                                 class="font-heading text-xl font-bold text-darkText group-hover:text-brand transition-colors uppercase tracking-tight mb-3">
-                                Care Worker</h3>
-                            <p class="text-gray-500 text-sm md:text-base max-w-2xl">Support our clients with their daily
-                                routines, including personal care, meal preparation, and companionship. No experience
-                                required; full training provided.</p>
-                        </div>
-
-                        <div class="shrink-0 w-full md:w-auto">
-                            <a href="career-details.php"
-                                class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 group-hover:shadow-lg group-hover:shadow-black/30 transition-all duration-300 transform group-hover:-translate-y-0.5">
-                                View Details
-                                <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="job-card group block bg-white rounded-md p-6 md:p-8 border border-gray-100 shadow-md shadow-black/5 transition-all duration-300 transform hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-black/10 relative overflow-hidden"
-                    data-type="full-time" data-location="surrey">
-                    <div
-                        class="absolute top-0 left-0 w-1.5 h-full bg-brand transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
-                    </div>
-
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                        <div class="flex-1">
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-brand/5 text-brand px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-brand/10">Full-Time</span>
-                                <span
-                                    class="bg-gray-100 text-darkText px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200">Surrey,
-                                    UK</span>
-                            </div>
-                            <h3
-                                class="font-heading text-xl font-bold text-darkText group-hover:text-brand transition-colors uppercase tracking-tight mb-3">
-                                Senior Care Supervisor</h3>
-                            <p class="text-gray-500 text-sm md:text-base max-w-2xl">Oversee care delivery, conduct
-                                assessments, and mentor junior staff. Requires NVQ Level 3 in Health and Social Care.
+                                <?php echo htmlspecialchars($job['c_title']); ?>
+                            </h3>
+                            <p class="text-gray-500 text-sm md:text-base max-w-2xl line-clamp-2">
+                                <?php echo strip_tags($job['c_description']); ?>
                             </p>
                         </div>
 
                         <div class="shrink-0 w-full md:w-auto">
-                            <a href="career-details.php"
+                            <a href="career-details.php?id=<?php echo $job['id']; ?>"
                                 class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 group-hover:shadow-lg group-hover:shadow-black/30 transition-all duration-300 transform group-hover:-translate-y-0.5">
                                 View Details
                                 <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"
@@ -159,49 +142,16 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="job-card group block bg-white rounded-md p-6 md:p-8 border border-gray-100 shadow-md shadow-black/5 transition-all duration-300 transform hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-black/10 relative overflow-hidden"
-                    data-type="part-time" data-location="head office">
-                    <div
-                        class="absolute top-0 left-0 w-1.5 h-full bg-brand transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
-                    </div>
-
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                        <div class="flex-1">
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span
-                                    class="bg-brand/5 text-brand px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-brand/10">Part-Time</span>
-                                <span
-                                    class="bg-gray-100 text-darkText px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200">Head
-                                    Office</span>
-                            </div>
-                            <h3
-                                class="font-heading text-xl font-bold text-darkText group-hover:text-brand transition-colors uppercase tracking-tight mb-3">
-                                Office Support</h3>
-                            <p class="text-gray-500 text-sm md:text-base max-w-2xl">Handle administrative duties, answer
-                                phone calls, and assist with staff scheduling and compliance documentation.</p>
-                        </div>
-
-                        <div class="shrink-0 w-full md:w-auto">
-                            <a href="career-details.php"
-                                class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-bold rounded-md text-white bg-brand hover:bg-brandDark shadow-md shadow-black/20 group-hover:shadow-lg group-hover:shadow-black/30 transition-all duration-300 transform group-hover:-translate-y-0.5">
-                                View Details
-                                <svg class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
 
                 <div id="no-results"
                     class="hidden text-center py-16 bg-white rounded-md border border-dashed border-gray-300">
                     <p class="text-gray-500 font-bold">No jobs found matching your selection.</p>
                 </div>
-
             </div>
+
+
         </div>
     </section>
 

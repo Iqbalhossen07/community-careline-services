@@ -76,32 +76,53 @@ document.addEventListener("DOMContentLoaded", function () {
 // Job Filtering Logic
 document.addEventListener("DOMContentLoaded", function () {
   // --- ১. ক্যারিয়ার ফিল্টার লজিক ---
-  const typeFilter = document.getElementById("filter-type");
-  const locationFilter = document.getElementById("filter-location");
-  const jobCards = document.querySelectorAll(".job-card");
+const typeFilter = document.getElementById("filter-type");
+const locationFilter = document.getElementById("filter-location");
+const resetButton = document.getElementById("reset-filters");
+const jobCards = document.querySelectorAll(".job-card");
+const noResults = document.getElementById("no-results");
 
-  if (typeFilter && locationFilter) {
-    // চেক করছি এই এলিমেন্টগুলো পেইজে আছে কি না
-    const filterJobs = () => {
-      const selectedType = typeFilter.value.toLowerCase();
-      const selectedLocation = locationFilter.value.toLowerCase();
+const filterJobs = () => {
+  const selectedType = typeFilter.value.toLowerCase();
+  const selectedLocation = locationFilter.value.toLowerCase();
+  let visibleCount = 0;
 
-      jobCards.forEach((card) => {
-        const cardType = card.getAttribute("data-type").toLowerCase();
-        const cardLocation = card.getAttribute("data-location").toLowerCase();
+  jobCards.forEach((card) => {
+    const cardType = card.getAttribute("data-type").toLowerCase();
+    const cardLocation = card.getAttribute("data-location").toLowerCase();
 
-        const typeMatch =
-          selectedType === "all" || cardType.includes(selectedType);
-        const locationMatch =
-          selectedLocation === "all" || cardLocation.includes(selectedLocation);
+    const typeMatch = selectedType === "all" || cardType === selectedType;
+    const locationMatch =
+      selectedLocation === "all" || cardLocation === selectedLocation;
 
-        card.style.display = typeMatch && locationMatch ? "block" : "none";
-      });
-    };
+    if (typeMatch && locationMatch) {
+      card.style.display = "block";
+      visibleCount++;
+    } else {
+      card.style.display = "none";
+    }
+  });
 
-    typeFilter.addEventListener("change", filterJobs);
-    locationFilter.addEventListener("change", filterJobs);
+  // রেজাল্ট না থাকলে মেসেজ দেখানো
+  if (visibleCount === 0) {
+    noResults.classList.remove("hidden");
+  } else {
+    noResults.classList.add("hidden");
   }
+};
+
+// ইভেন্ট লিসেনার
+if (typeFilter) typeFilter.addEventListener("change", filterJobs);
+if (locationFilter) locationFilter.addEventListener("change", filterJobs);
+
+// রিসেট বাটন ফিক্স
+if (resetButton) {
+  resetButton.addEventListener("click", function () {
+    typeFilter.value = "all";
+    locationFilter.value = "all";
+    filterJobs(); // ভ্যালু 'all' করে আবার ফিল্টার কল করা হলো
+  });
+}
 
   // --- ২. ব্লগ ফিল্টার লজিক ---
   const filterBtns = document.querySelectorAll(".filter-btn");

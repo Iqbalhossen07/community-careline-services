@@ -1,4 +1,26 @@
-<?php include('head.php') ?>
+<?php include('head.php');
+
+// ১. ইউআরএল থেকে আইডি চেক করা
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    header('Location: careers.php');
+    exit();
+}
+
+$id = intval($_GET['id']);
+
+// ২. ডাটাবেস থেকে ওই নির্দিষ্ট ক্যারিয়ারের ডাটা আনা
+$stmt = $mysqli->prepare("SELECT * FROM careers WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$career = $result->fetch_assoc();
+
+if (!$career) {
+    header('Location: careers.php');
+    exit();
+}
+
+?>
 
 <body class="font-body text-gray-600 antialiased bg-white">
     <!-- header section -->
@@ -46,30 +68,31 @@
                             <span class="w-12 h-[2px] bg-brand/30"></span>
                         </h2>
 
-                        <p class="text-lg leading-relaxed mb-10 text-gray-600 text-justify">
-                            As a Care Worker at <span class="text-brand font-bold">Careline</span>, you are the heart of
-                            our service. You will provide essential support to our clients in their own homes, helping
-                            them maintain their independence and dignity. We are looking for individuals who are
-                            naturally kind, patient, and dedicated to providing high-quality care.
-                        </p>
+                        <div class="text-lg leading-relaxed mb-10 text-gray-600 text-justify font-body">
+                            <?php echo $career['c_description']; ?>
+                        </div>
 
                         <div
-                            class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-2xl bg-lightBg border border-gray-100 shadow-inner">
+                            class="grid grid-cols-1 md:grid-cols-2 gap-2 p-6 rounded-2xl bg-lightBg border border-gray-100 shadow-inner">
                             <div class="space-y-1">
                                 <p class="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em]">Salary</p>
-                                <p class="text-darkText font-bold text-lg">£12.50 - £14.00<span
-                                        class="text-xs text-gray-400 font-medium">/hr</span></p>
+                                <p class="text-darkText font-bold text-base">
+                                    <?php echo !empty($career['c_salary']) ? htmlspecialchars($career['c_salary']) : 'Negotiable'; ?>
+                                </p>
+                            </div>
+
+                            <div class="space-y-1 ">
+                                <p class="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em]">Job Type</p>
+                                <p class="text-darkText font-bold text-base">
+                                    <?php echo htmlspecialchars($career['c_job_type']); ?></p>
                             </div>
                             <div class="space-y-1">
                                 <p class="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em]">Location</p>
                                 <div class="flex items-center gap-1.5">
                                     <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span>
-                                    <p class="text-darkText font-bold text-lg">London, UK</p>
+                                    <p class="text-darkText font-bold text-base">
+                                        <?php echo htmlspecialchars($career['c_location']); ?></p>
                                 </div>
-                            </div>
-                            <div class="space-y-1 ">
-                                <p class="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em]">Job Type</p>
-                                <p class="text-darkText font-bold text-lg">Permanent</p>
                             </div>
                         </div>
                     </div>
@@ -80,24 +103,27 @@
                             <div class="h-[1px] flex-1 bg-gray-100"></div>
                         </h3>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 responsibilities-dynamic">
                             <?php
-                            $tasks = [
-                                "Personal care (bathing, dressing)",
-                                "Preparing nutritious meals",
-                                "Medication administration",
-                                "Emotional support",
-                                "Light housekeeping",
-                                "Accompanying to appointments"
-                            ];
-                            foreach ($tasks as $task) {
-                                echo '
+                            // CKEditor থেকে আসা ডাটা থেকে <li> ট্যাগগুলো আলাদা করে আপনার কাস্টম ডিজাইনে ঢোকানো হচ্ছে
+                            $resp_html = $career['c_responsibilties'];
+                            preg_match_all('/<li>(.*?)<\/li>/s', $resp_html, $matches);
+
+                            if (!empty($matches[1])) {
+                                foreach ($matches[1] as $task) {
+                                    echo '
                 <div class="flex items-center gap-4 p-4 rounded-xl border border-gray-50 hover:border-brand/20 hover:bg-brand/[0.02] transition-all group">
                     <div class="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand shrink-0 group-hover:bg-brand group-hover:text-white transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
                     </div>
-                    <span class="text-gray-600 font-medium text-sm md:text-base">' . $task . '</span>
+                    <span class="text-gray-600 font-medium text-sm md:text-base">' . strip_tags($task) . '</span>
                 </div>';
+                                }
+                            } else {
+                                // যদি লিস্ট না থাকে সরাসরি টেক্সট দেখাবে
+                                echo '<div class="col-span-full text-gray-600">' . $resp_html . '</div>';
                             }
                             ?>
                         </div>
@@ -114,18 +140,19 @@
 
                         <div class="space-y-5 relative z-10">
                             <?php
-                            $requirements = [
-                                "A genuine desire to help others and make a difference.",
-                                "Excellent communication and listening skills.",
-                                "Reliability and a strong work ethic.",
-                                "Right to work in the UK."
-                            ];
-                            foreach ($requirements as $req) {
-                                echo '
+                            $req_html = $career['c_requirements'];
+                            preg_match_all('/<li>(.*?)<\/li>/s', $req_html, $matches_req);
+
+                            if (!empty($matches_req[1])) {
+                                foreach ($matches_req[1] as $req) {
+                                    echo '
                 <div class="flex items-start gap-4 group/item">
                     <div class="mt-1.5 w-2 h-2 rounded-full bg-brand group-hover/item:scale-150 transition-transform"></div>
-                    <p class="text-gray-300 font-medium group-hover/item:text-white transition-colors">' . $req . '</p>
+                    <p class="text-gray-300 font-medium group-hover/item:text-white transition-colors">' . strip_tags($req) . '</p>
                 </div>';
+                                }
+                            } else {
+                                echo '<div class="text-gray-300">' . $req_html . '</div>';
                             }
                             ?>
                         </div>
