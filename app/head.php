@@ -23,8 +23,8 @@ tailwind.config = {
     theme: {
         extend: {
             colors: {
-                'primary-start': '#538d00', // আপনার দেওয়া কালার
-                'primary-end': '#7ab81f',
+                'primary-start': '#00AEEE', // আপনার দেওয়া কালার
+                'primary-end': '#2589C9',
                 'sidebar-bg': '#ffffff',
             },
             fontFamily: {

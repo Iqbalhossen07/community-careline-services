@@ -9,7 +9,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <div class="flex justify-between items-center h-20 md:h-20">
 
                 <a href="index.php" class="group inline-flex items-center py-2">
-                    <div class="w-44 md:w-56 h-auto overflow-hidden">
+                    <div class="w-20 md:w-24 h-auto overflow-hidden">
                         <img src="img/logo.png" alt="Community Careline Services (Bexley) Ltd"
                             class="w-full h-full object-contain filter drop-shadow-sm ">
                     </div>

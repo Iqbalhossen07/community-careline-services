@@ -17,8 +17,8 @@
         theme: {
             extend: {
                 colors: {
-                    brand: '#538d00',
-                    brandDark: '#7ab81f',
+                    brand: '#00AEEE',
+                    brandDark: '#2589C9',
                     darkText: '#1f2937',
                     lightBg: '#f9fafb'
                 },

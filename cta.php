@@ -12,15 +12,26 @@
                  Our team can craft a bespoke care plan just for you. Get in touch today.
              </p>
 
+             <?php
+                    // যদি আগে কোথাও contact_details ফেচ করা না থাকে, তবে এই কুয়েরিটি লাগবে
+                    $footer_contact_query = "SELECT location, phone, email FROM contact_details ORDER BY id DESC LIMIT 1";
+                    $footer_contact_result = $mysqli->query($footer_contact_query);
+                    $f_contact = $footer_contact_result->fetch_assoc();
+
+                    // ডাটা হ্যান্ডেলিং
+                    $f_phone = !empty($f_contact['phone']) ? $f_contact['phone'] : '';
+                   
+                    ?>
+
              <div class="flex flex-row justify-center gap-3 md:gap-4">
-                 <a href="tel:0800123456"
+                 <a href="tel:<?php echo str_replace(' ', '', $f_phone); ?>"
                      class="flex-1 sm:flex-none bg-white text-darkText px-4 sm:px-8 py-3 rounded-md font-bold text-xs sm:text-base hover:bg-gray-50 transition-all shadow-[0_10px_25px_-5px_rgba(0,0,0,0.2)] hover:shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] transform hover:-translate-y-1 duration-300 flex items-center justify-center gap-2">
                      <svg class="w-3 h-3 sm:w-4 sm:h-4 text-brand" fill="currentColor" viewBox="0 0 20 20">
                          <path
                              d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 005.454 5.454l.774-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z">
                          </path>
                      </svg>
-                     <span class="whitespace-nowrap">01634 853 187</span>
+                     <span class="whitespace-nowrap"><?php echo htmlspecialchars($f_phone); ?></span>
                  </a>
 
                  <a href="contact.php"

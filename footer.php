@@ -2,8 +2,8 @@
       <div class="max-w-7xl mx-auto px-6 lg:px-8">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-gray-800 pb-12 mb-8">
               <div class="col-span-1 md:col-span-1 flex flex-col items-start">
-                  <a href="index.php" class="group inline-flex items-center mb-6">
-                      <div class="w-48 md:w-56 h-auto ">
+                  <a href="index.php" class="group inline-flex justify-center items-center mb-6">
+                      <div class="w-24 md:w-24 h-auto ">
                           <img src="img/logo.png" alt="Community Careline Services (Bexley) Ltd"
                               class="w-full h-full object-contain brightness-0 invert">
                       </div>
@@ -114,12 +114,29 @@
               </div>
           </div>
 
-          <div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-              <p>
-                  ©2021 by Community Careline Services (Medway) Ltd. Proudly created with Wix.com</p>
-              <div class="flex space-x-4 mt-4 md:mt-0">
-                  <a href="privacy-policy.php" class="hover:text-white transition-colors">Privacy Policy</a>
-                  <a href="terms-and-conditions.php" class="hover:text-white transition-colors">Terms & Conditions</a>
+          <div class="max-container mx-auto  py-6">
+              <div class="flex flex-col items-center md:items-start gap-4">
+
+                  <div class="text-xs md:text-sm text-gray-400 text-center md:text-left leading-relaxed">
+                      <p>
+                          © 2026 <strong class="text-white">Community Careline Services (Medway) Ltd.</strong>
+                          All Rights Reserved. Registered in
+                          <strong class="text-white">England & Wales </strong> with
+                          Company Number: <strong class="text-white">13876726</strong>
+                      </p>
+                  </div>
+                  <div
+                      class="flex items-center justify-center md:justify-start space-x-6 text-sm border-t border-gray-800 pt-4 w-full md:w-auto">
+                      <a href="privacy-policy.php"
+                          class="text-gray-400 hover:text-white transition-colors hover:underline underline-offset-4">
+                          Privacy Policy
+                      </a>
+                      <span class="text-gray-700">|</span> <a href="terms-and-conditions.php"
+                          class="text-gray-400 hover:text-white transition-colors hover:underline underline-offset-4">
+                          Terms & Conditions
+                      </a>
+                  </div>
+
               </div>
           </div>
       </div>

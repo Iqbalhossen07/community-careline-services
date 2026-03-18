@@ -3,7 +3,7 @@ ob_start();
 session_start();
 
 
-// $mysqli = new mysqli('localhost', 'teamciph_vadiya', 'CzI{DOZCUwps=n18', 'teamciph_vadiya');
+// $mysqli = new mysqli('localhost', 'careline', '18hESPUFo7VJPw7goEvL', 'careline');
 $mysqli = new mysqli('localhost', 'root', '', 'care');
 
 $mysqli->set_charset("utf8mb4");
